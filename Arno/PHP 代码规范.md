@@ -2,15 +2,25 @@
 
 Author: Arno
 
+以标准 PSR 规范为基础
+
+> https://github.com/kof97/PSR/blob/master/PSR1_zh-cn.md
+
+> https://github.com/kof97/PSR/blob/master/PSR2_zh-cn.md
+
+> https://github.com/kof97/PSR/blob/master/PSR4_zh-cn.md
+
 ---
 
 ## 编辑规范
 
 * 编码格式均设定为 `不带 BOM 头的 UTF-8 编码`
 
-* 每行末尾不允许有多余的空格
+* 每行末尾 `不允许` 有多余的空格
 
 * 每行字符数建议在 80 以内，尽量不要超过 120
+
+* `能够使用单引号的时候，就不要使用双引号`
 
 * 必须采用完整的 PHP 标签 `<?php ?>`
 
