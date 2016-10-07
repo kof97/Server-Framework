@@ -17,34 +17,29 @@ class AutoLoader
      */
     public static function load($class)
     {
-        foreach (NAMESPACE_LIST as $key => $value) {
-            $namespace = $value;
-            $prefix = $namespace . '\\';
+        $namespace = 'Framework';
+        $prefix = $namespace . '\\';
 
-            $len = strlen($prefix);
-            if (strncmp($prefix, $class, $len) !== 0) {
-                // Another namespace.
-                continue;
-            }
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) {
+            throw new Exception("Namespace ['{$namespace}'] is not exist");
+        }
 
-            $class_name = substr($class, $len);
+        $class_name = substr($class, $len);
 
-            $file = rtrim(__DIR__, DS) . LIB_PATH . $namespace . DS . strtr($class_name, '\\', DS) . '.php';
+        $file = rtrim(__DIR__, DS) . DS . $namespace . DS . strtr($class_name, '\\', DS) . '.php';
 
-            if (is_file($file)) {
-                require $file;
-            }
+        if (is_file($file)) {
+            require $file;
         }
     }
 }
 
 if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-    throw new Exception('This Framework requires PHP version 5.4 or higher.');
+    // throw new Exception('This Framework requires PHP version 5.4 or higher.');
 }
 
 define('DS', DIRECTORY_SEPARATOR);
-define('LIB_PATH', DS . 'lib' . DS);
-define('NAMESPACE_LIST', array('Common', 'Framework'));
 
 spl_autoload_register(array('AutoLoader', 'load'));
 
