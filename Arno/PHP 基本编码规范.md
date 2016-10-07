@@ -200,19 +200,3 @@ class Curl
 //end of script
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
