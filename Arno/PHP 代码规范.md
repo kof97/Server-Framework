@@ -12,6 +12,19 @@ Author: Arno
 
 * 每行字符数建议在 80 以内，尽量不要超过 120
 
+* 必须采用完整的 PHP 标签 `<?php ?>`
+
+* 若是纯 PHP 代码的文件，不允许出现 PHP 的结束标签 `?>`，文件末尾必须加上 `// end of script`，同时加上一个新的空行，例：
+
+```
+<?php
+
+
+
+// end of script
+
+```
+
 * 符号后面都 `必须` 跟一个空格，例如 `$a = $b`、`function test() {}`、`$a > $b`、`for($i = 0; $i < 2; ++i) {}`
 
 * 必须使用 `4 个空格` 缩进，若是 tab 缩进，必须将编辑器设置为 4 个空格的 tab
@@ -34,19 +47,20 @@ Author: Arno
 
 ### 面向过程编程
 
-* 函数/过程 function
+* 函数 function
 
-* 
+* 变量
 
 ### 面向对象编程
 
+* 命名空间 namespace
+
 * 类 class
 
-* 成员变量
+* 成员变量/属性 property
 
 * 方法 method
 
-* 
 
 ## 命名规范
 
@@ -85,12 +99,99 @@ Author: Arno
 
 * 成员变量以及方法采用 `驼峰命名`
 
+* 局部变量采用 `下划线命名`
+
 ```
+<?php
+
     class CurlClient
     {
+        protected $appId;
 
+        protected $appKey;
+
+        protected $curl;
+
+        protected $curlOptions;
+
+        function __construct($app_id, $app_key)
+        {
+            $this->appId = $app_id;
+            $this->appKey = $app_key;
+        }
+
+        public function init()
+        {
+
+        }
+
+        public function getInstance()
+        {
+            return $this->curl;
+        }
     }
+
+// end of script
+
 ```
+
+### 注释
+
+例：
+
+```
+/**
+ * Class Curl
+ *
+ * @category PHP
+ * @package  pkg
+ * @author   Arno
+ */
+class Curl
+{
+    /**
+     * @var Curl instance.
+     */
+    protected $curl;
+
+    /**
+     * Check the curl extension.
+     */
+    public function __construct()
+    {
+        if (!extension_loaded('curl')) {
+            throw new Exception('The cURL extension must be loaded to use the "curl".');
+        }
+    }
+
+    /**
+     * Init a new curl instance.
+     *
+     * @params string $app_id  The app id.
+     * @params array  $headers The request headers.
+     */
+    public function init($app_id, $headers = array())
+    {
+        // init
+    }
+
+    /**
+     * Set a curl option.
+     *
+     * @param string $key
+     * @param string $value
+     */
+    public function setopt($key, $value)
+    {
+        curl_setopt($this->curl, $key, $value);
+    }
+}
+
+//end of script
+
+```
+
+
 
 
 
