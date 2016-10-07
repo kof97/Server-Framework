@@ -30,6 +30,24 @@ Author: Arno
         (setq tab-width 4)
 ```
 
+## 概念统一
+
+### 面向过程编程
+
+* 函数/过程 function
+
+* 
+
+### 面向对象编程
+
+* 类 class
+
+* 成员变量
+
+* 方法 method
+
+* 
+
 ## 命名规范
 
 ### 常量
@@ -41,3 +59,49 @@ Author: Arno
 ```
     define('DB_MASTER', 'MASTER');
 ```
+
+### 变量
+
+* 局部变量采用下划线命名的方式，即全部使用小写，多个单词使用 `_` 分隔
+
+```
+    $database_name = 'kof97';
+```
+
+### 函数名
+
+* 函数名采用驼峰命名
+
+```
+    function testCase($argv1, $argv2)
+    {
+        // function
+    }
+```
+
+### 面向对象
+
+* 类名采用 `大驼峰命名`
+
+* 成员变量以及方法采用 `驼峰命名`
+
+```
+    class CurlClient
+    {
+
+    }
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
