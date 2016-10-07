@@ -1,6 +1,6 @@
 # PHP 开发规范
 
-Author: Arno
+By Arno
 
 以标准 PSR 规范为基础
 

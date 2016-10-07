@@ -1,6 +1,6 @@
 # PHP 开发注意事项
 
-Author: Arno
+By Arno
 
 ---
 
