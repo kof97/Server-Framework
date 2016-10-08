@@ -11,9 +11,20 @@ use Resource;
  */
 class Route
 {
+	protected $resource;
+
+	protected $act;
+
+
     public function __construct()
     {
 
+    }
+
+    public function load()
+    {
+    	$this->resource = isset($_REQUEST['mod']) ? $_REQUEST['mod'] : '';
+    	$this->act = isset($_REQUEST['act']) ? $_REQUEST['act'] : '';
     }
 
     public function run()
@@ -33,6 +44,16 @@ class Route
         }
 
         // call_user_func(array($obj, $this->afterRunFunc));
+    }
+
+    public function getResource()
+    {
+    	return $this->resource;
+    }
+
+    public function getAct()
+    {
+    	return $this->act;
     }
 }
 

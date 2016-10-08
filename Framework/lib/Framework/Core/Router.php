@@ -12,11 +12,9 @@ use Framework\Resource\Route;
  */
 class Router
 {
-    protected $preRunFunc;
-
-    protected $afterRunFunc;
-
     protected $route;
+
+    protected $resource;
 
     protected $act;
 
@@ -25,13 +23,26 @@ class Router
     public function __construct()
     {
         $this->route = new Route();
+
+        $this->route->load();
+
+        $this->resource = $this->route->getResource();
+        $this->act = $this->route->getAct();
     }
 
     public function run()
     {
         $this->preRun();
 
-        $this->route->run();
+        $code = 0;
+        $msg = '';
+
+        try {
+            $this->res = $this->route->run();
+        } catch (Exception $e) {
+            $code = $e->getCode();
+            $msg = $e->getMessage();
+        }
 
         $this->afterRun();
         $this->display();
@@ -44,7 +55,8 @@ class Router
 
     private function afterRun()
     {
-
+        var_dump($this->resource);
+        var_dump($this->act);
     }
 
     private function display()
