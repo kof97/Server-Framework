@@ -61,5 +61,7 @@ http://www.example.com/app/2.0/foo
 ```
 因为不同的版本，可以理解成同一种资源的不同表现形式，所以应该采用同一个URI。版本号可以在HTTP请求头信息的Accept字段中进行区分
 > Accept: vnd.example-com.foo+json; version=1.0
+
 > Accept: vnd.example-com.foo+json; version=1.1
+
 > Accept: vnd.example-com.foo+json; version=2.0
