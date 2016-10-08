@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Route;
+namespace Framework\Resource;
 
 /**
  * Class Route.
@@ -11,12 +11,7 @@ class Route
 {
     public function __construct()
     {
-        // It should never be used.
-    }
 
-    public static function init()
-    {
-        
     }
 
     public function preRun()
@@ -26,7 +21,7 @@ class Route
 
     public function afterRun()
     {
-    
+
     }
 }
 

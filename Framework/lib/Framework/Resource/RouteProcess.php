@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Route;
+namespace Framework\Resource;
 
 /**
  * Class RouteProcess.

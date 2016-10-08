@@ -16,6 +16,12 @@ class Router
 
     protected $afterRunFunc;
 
+    protected $resource;
+
+    protected $act;
+
+    protected $res;
+
     public function __construct()
     {
         $this->preRunFunc = 'preRun';
