@@ -12,22 +12,34 @@ use Resource;
  */
 class Router
 {
-    protected static $router;
+    protected $preRunFunc;
+
+    protected $afterRunFunc;
 
     public function __construct()
     {
-        
-    }
-
-    public static function init()
-    {
-
+        $this->preRunFunc = 'preRun';
+        $this->afterRunFunc = 'afterRun';
     }
 
     public function run()
     {
         $obj = new Resource\Test();
-        call_user_func(array($obj, 'run'));
+
+        try {
+            call_user_func(array($obj, $this->preRunFunc));
+        } catch (Exception $e) {
+            
+        }
+
+        try {
+            call_user_func(array($obj, 'run'));
+        } catch (Exception $e) {
+            
+        }
+
+        call_user_func(array($obj, $this->afterRunFunc));
+
     }
 }
 
