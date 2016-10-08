@@ -2,6 +2,8 @@
 
 namespace Framework;
 
+use Framework\Common\File;
+
 /**
  * Class Application.
  *
@@ -9,7 +11,6 @@ namespace Framework;
  */
 class Application
 {
-    
     private function __construct()
     {
         // It should never be used.
@@ -39,11 +40,11 @@ class Application
 
     private static function initRestful($conf)
     {
-        $resource_root = ROOT . isset($conf['resource_root']) ? $conf['resource_root'] : 'restful/Resource';
-        $model_root = ROOT . isset($conf['model_root']) ? $conf['model_root'] : 'restful/Model';
+        $resource_root = ROOT . (isset($conf['resource_root']) ? $conf['resource_root'] : 'restful/Resource');
+        $model_root = ROOT . (isset($conf['model_root']) ? $conf['model_root'] : 'restful/Model');
 
-        is_dir($resource_root) || self::makeDir($resource_root);
-        is_dir($model_root) || self::makeDir($model_root);
+        is_dir($resource_root) || File::makeDir($resource_root);
+        is_dir($model_root) || File::makeDir($model_root);
     }
 }
 
