@@ -4,6 +4,8 @@ namespace Framework;
 
 use \Exception;
 use Framework\Common\File;
+use Framework\Common\Loader;
+use Framework\Core\Router;
 
 /**
  * Class Application.
@@ -55,19 +57,9 @@ class Application
             throw new Exception('The dir is not exist, please run "php bin/init.php" first');
         }
 
-        spl_autoload_register(function ($class) {
-            $path = $resource_root . DIRECTORY_SEPARATOR . $class . '.php';
-            if (is_file($path)) {
-                require $path;
-            }
-        });
+        Loader::batchRegister(array($resource_root, $model_root));
 
-        spl_autoload_register(function ($class) {
-            $path = $model_root . DIRECTORY_SEPARATOR . $class . '.php';
-            if (is_file($path)) {
-                require $path;
-            }
-        });
+        Router::init();
     }
 }
 
