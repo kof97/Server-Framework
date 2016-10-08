@@ -3,6 +3,7 @@
 namespace Framework\Resource;
 
 use Resource;
+use \Exception;
 
 /**
  * Class Route.
@@ -11,10 +12,15 @@ use Resource;
  */
 class Route
 {
-	protected $resource;
+    /**
+     * @var The request resource.
+     */
+    protected $resource;
 
-	protected $act;
-
+    /**
+     * @var The request act.
+     */
+    protected $act;
 
     public function __construct()
     {
@@ -23,13 +29,20 @@ class Route
 
     public function load()
     {
-    	$this->resource = isset($_REQUEST['mod']) ? $_REQUEST['mod'] : '';
-    	$this->act = isset($_REQUEST['act']) ? $_REQUEST['act'] : '';
+        $this->resource = isset($_REQUEST['mod']) ? $_REQUEST['mod'] : '';
+        $this->act = isset($_REQUEST['act']) ? $_REQUEST['act'] : '';
+
     }
 
     public function run()
     {
-    	$obj = new Resource\Test();
+        $class = 'Resource\\' . $this->resource;
+
+        if (!class_exists($class)) {
+            throw new Exception("The class ['{$class}'] is not exist");
+        }
+
+        $obj = new $class();
 
         try {
             // call_user_func(array($obj, $this->preRunFunc));
@@ -48,12 +61,12 @@ class Route
 
     public function getResource()
     {
-    	return $this->resource;
+        return $this->resource;
     }
 
     public function getAct()
     {
-    	return $this->act;
+        return $this->act;
     }
 }
 

@@ -12,12 +12,24 @@ use Framework\Resource\Route;
  */
 class Router
 {
+    /**
+     * @var The instance of Route.
+     */
     protected $route;
 
+    /**
+     * @var The request resource.
+     */
     protected $resource;
 
+    /**
+     * @var The request act.
+     */
     protected $act;
 
+    /**
+     * @var The final response.
+     */
     protected $res;
 
     public function __construct()
@@ -42,6 +54,7 @@ class Router
         } catch (Exception $e) {
             $code = $e->getCode();
             $msg = $e->getMessage();
+            echo $msg . PHP_EOL;
         }
 
         $this->afterRun();
