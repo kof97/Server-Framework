@@ -3,7 +3,7 @@
 namespace Framework\Core;
 
 use \Exception;
-use Resource;
+use Framework\Resource\Route;
 
 /**
  * Class Router.
@@ -16,7 +16,7 @@ class Router
 
     protected $afterRunFunc;
 
-    protected $resource;
+    protected $route;
 
     protected $act;
 
@@ -24,27 +24,31 @@ class Router
 
     public function __construct()
     {
-        $this->preRunFunc = 'preRun';
-        $this->afterRunFunc = 'afterRun';
+        $this->route = new Route();
     }
 
     public function run()
     {
-        $obj = new Resource\Test();
+        $this->preRun();
 
-        try {
-            call_user_func(array($obj, $this->preRunFunc));
-        } catch (Exception $e) {
-            
-        }
+        $this->route->run();
 
-        try {
-            call_user_func(array($obj, 'run'));
-        } catch (Exception $e) {
-            
-        }
+        $this->afterRun();
+        $this->display();
+    }
 
-        call_user_func(array($obj, $this->afterRunFunc));
+    private function preRun()
+    {
+
+    }
+
+    private function afterRun()
+    {
+
+    }
+
+    private function display()
+    {
 
     }
 }

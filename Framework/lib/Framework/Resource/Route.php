@@ -2,6 +2,8 @@
 
 namespace Framework\Resource;
 
+use Resource;
+
 /**
  * Class Route.
  *
@@ -14,14 +16,23 @@ class Route
 
     }
 
-    public function preRun()
+    public function run()
     {
+    	$obj = new Resource\Test();
 
-    }
+        try {
+            // call_user_func(array($obj, $this->preRunFunc));
+        } catch (Exception $e) {
+            
+        }
 
-    public function afterRun()
-    {
+        try {
+            call_user_func(array($obj, 'run'));
+        } catch (Exception $e) {
+            
+        }
 
+        // call_user_func(array($obj, $this->afterRunFunc));
     }
 }
 
