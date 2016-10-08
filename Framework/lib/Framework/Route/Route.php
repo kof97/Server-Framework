@@ -18,6 +18,16 @@ class Route
     {
         
     }
+
+    public function preRun()
+    {
+
+    }
+
+    public function afterRun()
+    {
+    
+    }
 }
 
 // end of script

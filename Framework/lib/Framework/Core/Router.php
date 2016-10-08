@@ -14,7 +14,7 @@ class Router
 {
     protected static $router;
 
-    function __construct()
+    public function __construct()
     {
         
     }
