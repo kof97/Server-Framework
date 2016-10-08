@@ -9,7 +9,7 @@ namespace Framework\Route;
  */
 class Route
 {
-    private function __construct()
+    public function __construct()
     {
         // It should never be used.
     }

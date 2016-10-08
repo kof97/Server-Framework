@@ -50,16 +50,17 @@ class Application
     {
         $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-        $resource_root = $root . (isset($conf['resource_root']) ? $conf['resource_root'] : 'restful/Resource');
-        $model_root = $root . (isset($conf['model_root']) ? $conf['model_root'] : 'restful/Model');
+        $restful_root = $root . (isset($conf['restful_root']) ? $conf['restful_root'] : 'restful');
 
-        if (!is_dir($resource_root) || !is_dir($model_root)) {
+        if (!is_dir($restful_root)) {
             throw new Exception('The dir is not exist, please run "php bin/init.php" first');
         }
 
-        Loader::batchRegister(array($resource_root, $model_root));
+        Loader::register(array('Resource', 'Model'), $restful_root);
 
-        Router::init();
+        $router = new Router();
+
+        $router->run();
     }
 }
 

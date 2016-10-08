@@ -21,7 +21,7 @@ class AutoLoader
 
         $len = strlen($prefix);
         if (strncmp($prefix, $class, $len) !== 0) {
-            throw new Exception("Namespace ['{$namespace}'] is not exist");
+            return false;
         }
 
         $class_name = substr($class, $len);

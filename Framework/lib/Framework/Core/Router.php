@@ -3,6 +3,7 @@
 namespace Framework\Core;
 
 use \Exception;
+use Resource;
 
 /**
  * Class Router.
@@ -13,21 +14,20 @@ class Router
 {
     protected static $router;
 
-    private function __construct()
+    function __construct()
     {
         
     }
 
     public static function init()
     {
-        self::$router = new self();
 
-        return self::$router;
     }
 
     public function run()
     {
-        
+        $obj = new Resource\Test();
+        call_user_func(array($obj, 'run'));
     }
 }
 
