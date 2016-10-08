@@ -2,6 +2,7 @@
 
 namespace Framework\Common;
 
+use \Exception;
 use Framework\Common\File;
 
 /**
