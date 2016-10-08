@@ -5,17 +5,12 @@ if (version_compare(PHP_VERSION, '5.4.0', '<')) {
 }
 
 define('DS', DIRECTORY_SEPARATOR);
-
 define('ROOT', dirname(__DIR__) . DS);
-define('BIN_PATH', ROOT . 'bin' . DS);
-
 
 $conf = ROOT . 'conf' . DS . 'server.ini';
 
-var_dump(ROOT);
-
 require ROOT . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
 
-Framework\Application::run($conf);
+Framework\Application::init($conf);
 
 // end of script

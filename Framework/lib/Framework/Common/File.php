@@ -9,7 +9,6 @@ namespace Framework\Common;
  */
 class File
 {
-    
     private function __construct()
     {
         // It should never be used.

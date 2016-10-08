@@ -11,11 +11,26 @@ use Framework\Common\File;
  */
 class Application
 {
+
+    public static $config;
+
     private function __construct()
     {
         // It should never be used.
     }
 
+    public static function run($conf)
+    {
+
+    }
+
+    /**
+     * Cli init.
+     *
+     * @param string $conf Config path.
+     *
+     * @return void
+     */
     public static function init($conf)
     {
         $conf = parse_ini_file($conf, true);
@@ -45,6 +60,8 @@ class Application
 
         is_dir($resource_root) || File::makeDir($resource_root);
         is_dir($model_root) || File::makeDir($model_root);
+
+        echo PHP_EOL . 'Init restful OK' . PHP_EOL;
     }
 }
 
