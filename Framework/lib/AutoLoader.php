@@ -3,7 +3,6 @@
  * Autoloader.
  *
  * @category PHP
- * @package  lib
  */
 
 class AutoLoader
@@ -34,12 +33,6 @@ class AutoLoader
         }
     }
 }
-
-if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-    throw new Exception('This Framework requires PHP version 5.4 or higher.');
-}
-
-define('DS', DIRECTORY_SEPARATOR);
 
 spl_autoload_register(array('AutoLoader', 'load'));
 
