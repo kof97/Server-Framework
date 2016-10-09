@@ -28,15 +28,35 @@ class Route implements RouteInterface
      */
     protected $headers;
 
+    /**
+     * @var The function that active before run.
+     */
+    protected $preRunFunc;
+
+    /**
+     * @var The function that active after run.
+     */
+    protected $afterRunFunc;
+
+    /**
+     * @var The Get request.
+     */
+    protected $paramsGet;
+
     public function __construct()
     {
+        $this->preRunFunc = 'preRun';
+        $this->afterRunFunc = 'afterRun';
 
+        $this->paramsGet = $_GET;
     }
 
     public function load()
     {
-        $this->resource = isset($_REQUEST['mod']) ? $_REQUEST['mod'] : '';
-        $this->act = isset($_REQUEST['act']) ? $_REQUEST['act'] : '';
+        $params = $this->paramsGet;
+
+        $this->resource = isset($params['mod']) ? $params['mod'] : '';
+        $this->act = isset($params['act']) ? $params['act'] : '';
 
         $this->headers = getallheaders();
     }
@@ -59,9 +79,10 @@ class Route implements RouteInterface
 
         $code = 0;
         $msg = '';
+        $res = false;
 
         try {
-            // call_user_func(array($obj, $this->preRunFunc));
+            $res = call_user_func(array($obj, $this->preRunFunc));
         } catch (Exception $e) {
             $code = $e->getCode();
             $msg = $e->getMessage();
@@ -80,7 +101,7 @@ class Route implements RouteInterface
             }
         }
 
-        // call_user_func(array($obj, $this->afterRunFunc));
+        call_user_func(array($obj, $this->afterRunFunc));
     }
 
     public function getResource()
