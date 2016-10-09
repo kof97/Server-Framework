@@ -2,12 +2,14 @@
 
 namespace Framework\Resource;
 
+use Framework\Base\ResourceInterface;
+
 /**
  * Class Resource.
  *
  * @category PHP
  */
-class Resource
+class Resource implements ResourceInterface
 {
     public function __construct()
     {
@@ -23,7 +25,6 @@ class Resource
     {
 
     }
-
 }
 
 // end of script
