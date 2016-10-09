@@ -22,6 +22,11 @@ class Route
      */
     protected $act;
 
+    /**
+     * @var The request headers.
+     */
+    protected $headers;
+
     public function __construct()
     {
 
@@ -32,6 +37,7 @@ class Route
         $this->resource = isset($_REQUEST['mod']) ? $_REQUEST['mod'] : '';
         $this->act = isset($_REQUEST['act']) ? $_REQUEST['act'] : '';
 
+        $this->headers = getallheaders();
     }
 
     public function run()
