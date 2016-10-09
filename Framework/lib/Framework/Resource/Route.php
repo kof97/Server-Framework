@@ -51,6 +51,12 @@ class Route implements RouteInterface
 
         $obj = new $class();
 
+        $method = $this->act;
+
+        if (!method_exists($obj, $method)) {
+            throw new Exception("The method ['{$method}'] is not found in class ['{$class}']");
+        }
+
         $code = 0;
         $msg = '';
 
@@ -63,7 +69,7 @@ class Route implements RouteInterface
 
         if (!$code) {
             try {
-                call_user_func(array($obj, 'run'));
+                call_user_func(array($obj, $method));
             } catch (Exception $e) {
                 $code = $e->getCode();
                 $msg = $e->getMessage();
