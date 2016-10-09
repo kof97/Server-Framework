@@ -76,6 +76,11 @@ class Router
     {
 
     }
+
+    private function setRoute()
+    {
+        
+    }
 }
 
 // end of script

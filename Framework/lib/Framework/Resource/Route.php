@@ -4,13 +4,14 @@ namespace Framework\Resource;
 
 use Resource;
 use \Exception;
+use Framework\Base\RouteInterface;
 
 /**
  * Class Route.
  *
  * @category PHP
  */
-class Route
+class Route implements RouteInterface
 {
     /**
      * @var The request resource.
