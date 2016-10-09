@@ -23,6 +23,7 @@ class Resource
     {
 
     }
+
 }
 
 // end of script

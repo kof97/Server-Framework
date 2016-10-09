@@ -41,7 +41,7 @@ class Route implements RouteInterface
     /**
      * @var The Get request.
      */
-    protected $paramsGet;
+    protected $paramsGet = array();
 
     public function __construct()
     {
@@ -86,6 +86,7 @@ class Route implements RouteInterface
         } catch (Exception $e) {
             $code = $e->getCode();
             $msg = $e->getMessage();
+            echo $msg . PHP_EOL;
         }
 
         if (!$code) {
@@ -97,7 +98,7 @@ class Route implements RouteInterface
             }
 
             if ($code) {
-
+                echo $msg . PHP_EOL;
             }
         }
 
