@@ -3,7 +3,7 @@
 namespace Framework\Core;
 
 use \Exception;
-use Framework\Resource\Route;
+use Framework\Base\RouteInterface;
 
 /**
  * Class Router.
@@ -34,23 +34,25 @@ class Router
 
     public function __construct()
     {
-        $this->route = new Route();
-
-        $this->route->load();
-
-        $this->resource = $this->route->getResource();
-        $this->act = $this->route->getAct();
+        // init
     }
 
     public function run()
     {
+        $route = $this->route;
+
+        $route->load();
+
+        $this->resource = $route->getResource();
+        $this->act = $route->getAct();
+
         $this->preRun();
 
         $code = 0;
         $msg = '';
 
         try {
-            $this->res = $this->route->run();
+            $this->res = $route->run();
         } catch (Exception $e) {
             $code = $e->getCode();
             $msg = $e->getMessage();
@@ -68,8 +70,7 @@ class Router
 
     private function afterRun()
     {
-        var_dump($this->resource);
-        var_dump($this->act);
+
     }
 
     private function display()
@@ -77,9 +78,9 @@ class Router
 
     }
 
-    private function setRoute()
+    public function setRoute(RouteInterface $route)
     {
-        
+        $this->route = $route;
     }
 }
 

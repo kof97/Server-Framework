@@ -6,6 +6,7 @@ use \Exception;
 use Framework\Common\File;
 use Framework\Common\Loader;
 use Framework\Core\Router;
+use Framework\Resource\Route;
 
 /**
  * Class Application.
@@ -59,6 +60,8 @@ class Application
         Loader::register(array('Resource', 'Model'), $restful_root);
 
         $router = new Router();
+
+        $router->setRoute(new Route());
 
         $router->run();
     }

@@ -51,16 +51,27 @@ class Route implements RouteInterface
 
         $obj = new $class();
 
+        $code = 0;
+        $msg = '';
+
         try {
             // call_user_func(array($obj, $this->preRunFunc));
         } catch (Exception $e) {
-            
+            $code = $e->getCode();
+            $msg = $e->getMessage();
         }
 
-        try {
-            call_user_func(array($obj, 'run'));
-        } catch (Exception $e) {
-            
+        if (!$code) {
+            try {
+                call_user_func(array($obj, 'run'));
+            } catch (Exception $e) {
+                $code = $e->getCode();
+                $msg = $e->getMessage();
+            }
+
+            if ($code) {
+
+            }
         }
 
         // call_user_func(array($obj, $this->afterRunFunc));
