@@ -55,8 +55,8 @@ class Route implements RouteInterface
     {
         $params = $this->paramsGet;
 
-        $this->resource = isset($params['mod']) ? $params['mod'] : '';
-        $this->act = isset($params['act']) ? $params['act'] : '';
+        $this->resource = isset($params['mod']) ? $this->processClassName($params['mod']) : '';
+        $this->act = isset($params['act']) ? $this->processClassName($params['act']) : '';
 
         $this->headers = getallheaders();
     }
@@ -103,6 +103,15 @@ class Route implements RouteInterface
         }
 
         call_user_func(array($obj, $this->afterRunFunc));
+    }
+
+    private function processClassName($name)
+    {
+        $name = strtr($name, '_', ' ');
+
+        $class_name = str_replace(' ', '', ucwords($name));
+
+        return $class_name;
     }
 
     public function getResource()
