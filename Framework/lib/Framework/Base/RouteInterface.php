@@ -12,6 +12,10 @@ interface RouteInterface
     public function load();
 
     public function run();
+
+    public function getResource();
+
+    public function getAct();
 }
 
 // end of script
