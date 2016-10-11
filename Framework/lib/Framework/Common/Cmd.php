@@ -1,26 +1,30 @@
 <?php
 
-namespace Framework;
+namespace Framework\Common;
 
 use \Exception;
 use Framework\Common\File;
-use Framework\Common\Loader;
-use Framework\Core\Router;
-use Framework\Resource\Route;
 
 /**
- * Class Application.
+ * Class Cmd.
  *
  * @category PHP
  */
-class Application
+class Cmd
 {
     private function __construct()
     {
         // It should never be used.
     }
 
-    public static function run($conf)
+    /**
+     * Cli init.
+     *
+     * @param string $conf Config path.
+     *
+     * @return void
+     */
+    public static function init($conf)
     {
         $conf = parse_ini_file($conf, true);
 
@@ -39,7 +43,7 @@ class Application
 
         switch ($mode) {
             case 'restful':
-                self::runRestful($conf, $root);
+                self::initRestful($conf, $root);
                 break;
 
             default:
@@ -47,23 +51,19 @@ class Application
         }
     }
 
-    private static function runRestful($conf, $root)
+    private static function initRestful($conf, $root)
     {
         $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         $restful_root = $root . (isset($conf['restful_root']) ? $conf['restful_root'] : 'restful');
 
-        if (!is_dir($restful_root)) {
-            throw new Exception('The dir is not exist, please run "php bin/init.php" first');
-        }
+        $resource_root = $restful_root . DIRECTORY_SEPARATOR . 'Resource';
+        $model_root = $restful_root . DIRECTORY_SEPARATOR . 'Model';
 
-        Loader::register(array('Resource', 'Model'), $restful_root);
+        is_dir($resource_root) || File::makeDir($resource_root);
+        is_dir($model_root) || File::makeDir($model_root);
 
-        $router = new Router();
-
-        $router->setRoute(new Route());
-
-        $router->run();
+        echo PHP_EOL . 'Init restful OK' . PHP_EOL;
     }
 }
 

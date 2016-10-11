@@ -9,6 +9,6 @@ $conf = $root . 'conf' . DIRECTORY_SEPARATOR . 'server.ini';
 
 require $root . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
 
-Framework\Application::run($conf);
+Framework\Common\Cmd::init($conf);
 
 // end of script

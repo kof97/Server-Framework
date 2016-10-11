@@ -21,12 +21,13 @@ class AutoLoader
 
         $len = strlen($prefix);
         if (strncmp($prefix, $class, $len) !== 0) {
-            throw new Exception("Namespace ['{$namespace}'] is not exist");
+            return false;
         }
 
         $class_name = substr($class, $len);
 
-        $file = rtrim(__DIR__, DS) . DS . $namespace . DS . strtr($class_name, '\\', DS) . '.php';
+        $file = rtrim(__DIR__, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR
+                 . strtr($class_name, '\\', DIRECTORY_SEPARATOR) . '.php';
 
         if (is_file($file)) {
             require $file;
