@@ -81,3 +81,61 @@ print(count())        --5
 ```
 * 实现封装：如同前面所说，闭包函数就如同一个“类”，只有在该闭包函数里的方法才可以使用其局部变量，闭包函数之外的方法是不能读取其局部变量的。这就实现了面向对象的封装性，更安全更可靠。
 
+### declare(ticks=N)
+	
+* 例如N=1;Zend引擎每执行1条低级语句就去执行一次 register_tick_function() 注册的函数。
+可以粗略的理解为每执行一句php代码（例如:$num=1;）就去执行下已经注册的tick函数。
+一个用途就是控制某段代码执行时间，例如下面的代码虽然最后有个死循环，但是执行时间不会超过5秒。
+运行 php timeout.php
+
+```
+<?php
+declare(ticks=1);
+
+// 开始时间
+$time_start = time();
+
+// 检查是否已经超时
+function check_timeout(){
+    // 开始时间
+    global $time_start;
+    // 5秒超时
+    $timeout = 5;
+    if(time()-$time_start > $timeout){
+        exit("超时{$timeout}秒\n");
+    }
+}
+
+// Zend引擎每执行一次低级语句就执行一下check_timeout
+register_tick_function('check_timeout');
+
+// 模拟一段耗时的业务逻辑
+while(1){
+   $num = 1;
+}
+
+// 模拟一段耗时的业务逻辑，虽然是死循环，但是执行时间不会超过$timeout=5秒
+while(1){
+   $num = 1;
+}
+
+```
+
+* declare(ticks=1);每执行一次低级语句会检查一次该进程是否有未处理过的信号,测试代码如下：
+运行 php signal.php
+然后CTL+c 或者 kill -SIGINT PID 会导致运行代码跳出死循环去运行pcntl_signal注册的函数，效果就是脚本exit打印“Get signal SIGINT and exi”退出
+
+```
+<?php
+declare(ticks=1);
+pcntl_signal(SIGINT, function(){
+   exit("Get signal SIGINT and exit\n");
+});
+
+echo "Ctl + c or run cmd : kill -SIGINT " . posix_getpid(). "\n" ;
+
+while(1){
+  $num = 1;
+}
+
+```
