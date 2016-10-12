@@ -55,8 +55,6 @@ function task() {
         if ($i == 3) {
             yield killTask($childTid);
         }
-
-
     }
 }
 
