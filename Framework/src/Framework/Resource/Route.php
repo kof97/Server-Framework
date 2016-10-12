@@ -114,6 +114,24 @@ class Route implements RouteInterface
         return $class_name;
     }
 
+    public function setPreRunFunc($pre_run_function)
+    {
+        if (!empty($pre_run_function)) {
+            $this->preRunFunc = $pre_run_function;
+        }
+
+        return $this;
+    }
+
+    public function setAfterRunFunc($after_run_function)
+    {
+        if (!empty($after_run_function)) {
+            $this->afterRunFunc = $after_run_function;
+        }
+
+        return $this;
+    }
+
     public function getResource()
     {
         return $this->resource;
