@@ -7,8 +7,6 @@ namespace Framework\Coroutine;
  * Get the Generator function's returns.
  *
  * @category PHP
- * @package  Coroutine
- * @author   Arno [<arnoliu@tencent.com> | <1048434786@qq.com>]
  */
 class ReturnValue
 {

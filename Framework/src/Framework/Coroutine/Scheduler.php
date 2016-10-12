@@ -11,8 +11,6 @@ use \Exception;
  * Coroutine tasks' scheduler.
  *
  * @category PHP
- * @package  Coroutine
- * @author   Arno [<arnoliu@tencent.com> | <1048434786@qq.com>]
  */
 class Scheduler
 {

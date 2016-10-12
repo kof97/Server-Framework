@@ -10,8 +10,6 @@ use \SplStack;
  * Coroutine task.
  *
  * @category PHP
- * @package  Coroutine
- * @author   Arno [<arnoliu@tencent.com> | <1048434786@qq.com>]
  */
 class Task
 {

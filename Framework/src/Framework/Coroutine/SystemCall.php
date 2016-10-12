@@ -7,8 +7,6 @@ namespace Framework\Coroutine;
  * The SystemCall, some method can be used by functions such as the system call.
  *
  * @category PHP
- * @package  Coroutine
- * @author   Arno [<arnoliu@tencent.com> | <1048434786@qq.com>]
  */
 class SystemCall
 {
