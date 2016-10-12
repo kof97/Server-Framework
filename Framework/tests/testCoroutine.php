@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__DIR__) . 'lib' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
+require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
 
 use Framework\Coroutine\Scheduler;
 use Framework\Coroutine\SystemCall;
@@ -36,8 +36,6 @@ function killTask($tid) {
         }
     );
 }
-
-
 
 function childTask() {
     $tid = (yield getTaskId());
