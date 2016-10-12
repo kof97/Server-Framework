@@ -9,7 +9,6 @@ use Framework\Coroutine\Task;
 function getTaskId() {
     return new SystemCall(
         function(Task $task, Scheduler $scheduler) {
-
             $task->setSendValue($task->getTaskId());
             $scheduler->schedule($task);
         }
