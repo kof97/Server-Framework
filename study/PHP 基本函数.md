@@ -139,3 +139,105 @@ while(1){
 }
 
 ```
+
+
+### 匿名函数(闭包函数)
+
+* 定义：匿名函数（Anonymous functions），也叫闭包函数（closures），允许 临时创建一个没有指定名称的函数。最经常用作回调函数（callback）参数的值。当然，也有其它应用的情况。 
+```
+<?php
+ echo  preg_replace_callback ( '~-([a-z])~' , function ( $match ) {
+    return  strtoupper ( $match [ 1 ]);
+},  'hello-world' );
+ // 输出 helloWorld
+ ?> 
+
+```
+
+* 闭包函数也可以作为变量的值来使用。PHP 会自动把此种表达式转换成内置类 Closure 的对象实例。把一个 closure 对象赋值给一个变量的方式与普通变量赋值的语法是一样的，最后也要加上分号： 
+
+```
+<?php
+$greet  = function( $name )
+{
+     printf ( "Hello %s\r\n" ,  $name );
+};
+
+ $greet ( 'World' );
+ $greet ( 'PHP' );
+?> 
+
+```
+
+* Closure 对象也会从父作用域中继承类属性。这些变量都必须在函数或类的头部声明。从父作用域中继承变量与使用全局变量是不同的。全局变量存在于一个全局的范围，无论当前在执行的是哪个函数。而 closure 的父作用域则是声明该 closure 的函数（不一定要是它被调用的函数）。示例如下： 
+
+```
+<?php
+ // 一个基本的购物车，包括一些已经添加的商品和每种商品的数量。
+// 其中有一个方法用来计算购物车中所有商品的总价格，该方法使
+// 用了一个 closure 作为回调函数。
+ class  Cart
+ {
+    const  PRICE_BUTTER   =  1.00 ;
+    const  PRICE_MILK     =  3.00 ;
+    const  PRICE_EGGS     =  6.95 ;
+
+    protected    $products  = array();
+    
+    public function  add ( $product ,  $quantity )
+    {
+         $this -> products [ $product ] =  $quantity ;
+    }
+    
+    public function  getQuantity ( $product )
+    {
+        return isset( $this -> products [ $product ]) ?  $this -> products [ $product ] :
+                FALSE ;
+    }
+    
+    public function  getTotal ( $tax )
+    {
+         $total  =  0.00 ;
+        
+         $callback  =
+            function ( $quantity ,  $product ) use ( $tax , & $total )
+            {
+                 $pricePerItem  =  constant ( __CLASS__  .  "::PRICE_"  .
+                     strtoupper ( $product ));
+                 $total  += ( $pricePerItem  *  $quantity ) * ( $tax  +  1.0 );
+            };
+        
+         array_walk ( $this -> products ,  $callback );
+        return  round ( $total ,  2 );;
+    }
+}
+
+ $my_cart  = new  Cart ;
+
+ // 往购物车里添加条目
+ $my_cart -> add ( 'butter' ,  1 );
+ $my_cart -> add ( 'milk' ,  3 );
+ $my_cart -> add ( 'eggs' ,  6 );
+
+ // 打出出总价格，其中有 5% 的销售税.
+ print  $my_cart -> getTotal ( 0.05 ) .  "\n" ;
+ // 最后结果是 54.29
+ ?> 
+
+```
+
+> 关于作用域 需要加深理解! 
+
+
+### PSR标准
+
+>更多是在项目中进行高效合理的自动加载,composer如同一个利器,利用psr规范合理的进行自动加载
+
+#####psr-0目录结构
+
+```
+vendor/
+
+
+
+```
