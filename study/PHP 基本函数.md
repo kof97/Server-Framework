@@ -233,11 +233,335 @@ $greet  = function( $name )
 
 >更多是在项目中进行高效合理的自动加载,composer如同一个利器,利用psr规范合理的进行自动加载
 
-#####psr-0目录结构
+* 在Composer中,遵循psr-0目录结构如下
 
 ```
 vendor/
+    vendor_name/
+        package_name/
+            src/
+                vendor_name/
+                    package_name/
+                        ClassName.php     # vendor_name\package_name\ClassName
+            tests/
+                vendor_name/
+                    package_name/
+                        ClassNameTest.php     # vendor_name\package_name\ClassNameTest            
+
+```
+
+> 上面的目录已经很深了,src和tests包含了公共模块
+
+* 在Composer中,遵循psr-4目录结构如下
+
+```
+vendor/
+    vendor_name/
+        package_name/
+            scr/
+                ClassName.php         # vendor_name\package_name\ClassName
+            tests/
+                ClassNameTest.php     # vendor_name\package_name\ClassNameTest   
+
+```
+
+> 容易发现psr-4的目录结构明显比psr-0的目录结构要简单.对比PSR-0，除了PSR-4可以更简洁外，需要注意PSR-0中对下划线(_)是有特殊的处理的，下划线会转换成DIRECTORY_SEPARATOR，这是出于对PHP5.3以前版本兼容的考虑，而PSR-4中是没有这个处理的，这也是两者比较大的一个区别。
+
+> 此外，PSR-4要求在autoloader中不允许抛出exceptions以及引发任何级别的errors，也不应该有返回值。这是因为可能注册了多个autoloaders，如果一个autoloader没有找到对应的class，应该交给下一个来处理，而不是去阻断这个通道。
+
+> PSR-4更简洁更灵活了，但这使得它相对更复杂了。例如通过完全符合PSR-0标准的class name，通常可以明确的知道这个class的路径，而PSR-4可能就不是这样了。
+
+```
+    Given a foo-bar package of classes in the file system at the following paths ...  
+      
+        /path/to/packages/foo-bar/  
+            src/  
+                Baz.php             # Foo\Bar\Baz  
+                Qux/  
+                    Quux.php        # Foo\Bar\Qux\Quux  
+            tests/  
+                BazTest.php         # Foo\Bar\BazTest  
+                Qux/  
+                    QuuxTest.php    # Foo\Bar\Qux\QuuxTest  
+      
+    ... add the path to the class files for the \Foo\Bar\ namespace prefix as follows:  
+        <?php  
+         // instantiate the loader  
+         $loader = new \Example\Psr4AutoloaderClass;  
+           
+         // register the autoloader  
+         $loader->register();  
+           
+         // register the base directories for the namespace prefix  
+         $loader->addNamespace('Foo\Bar', '/path/to/packages/foo-bar/src');  
+         $loader->addNamespace('Foo\Bar', '/path/to/packages/foo-bar/tests');  
+      
+         //此时一个namespace prefix对应到了多个"base directory"  
+      
+         //autoloader会去加载/path/to/packages/foo-bar/src/Qux/Quux.php  
+         new \Foo\Bar\Qux\Quux;  
+      
+         //autoloader会去加载/path/to/packages/foo-bar/tests/Qux/QuuxTest.php  
+         new \Foo\Bar\Qux\QuuxTest;  
+
+```
+
+> PSR-4 autoloader的实现：
+
+```
+<?php  
+namespace Example;  
+  
+class Psr4AutoloaderClass  
+{  
+    /** 
+     * An associative array where the key is a namespace prefix and the value 
+     * is an array of base directories for classes in that namespace. 
+     * 
+     * @var array 
+     */  
+    protected $prefixes = array();  
+  
+    /** 
+     * Register loader with SPL autoloader stack. 
+     *  
+     * @return void 
+     */  
+    public function register()  
+    {  
+        spl_autoload_register(array($this, 'loadClass'));  
+    }  
+  
+    /** 
+     * Adds a base directory for a namespace prefix. 
+     * 
+     * @param string $prefix The namespace prefix. 
+     * @param string $base_dir A base directory for class files in the 
+     * namespace. 
+     * @param bool $prepend If true, prepend the base directory to the stack 
+     * instead of appending it; this causes it to be searched first rather 
+     * than last. 
+     * @return void 
+     */  
+    public function addNamespace($prefix, $base_dir, $prepend = false)  
+    {  
+        // normalize namespace prefix  
+        $prefix = trim($prefix, '\\') . '\\';  
+  
+        // normalize the base directory with a trailing separator  
+        $base_dir = rtrim($base_dir, '/') . DIRECTORY_SEPARATOR;  
+        $base_dir = rtrim($base_dir, DIRECTORY_SEPARATOR) . '/';  
+  
+        // initialize the namespace prefix array  
+        if (isset($this->prefixes[$prefix]) === false) {  
+            $this->prefixes[$prefix] = array();  
+        }  
+  
+        // retain the base directory for the namespace prefix  
+        if ($prepend) {  
+            array_unshift($this->prefixes[$prefix], $base_dir);  
+        } else {  
+            array_push($this->prefixes[$prefix], $base_dir);  
+        }  
+    }  
+  
+    /** 
+     * Loads the class file for a given class name. 
+     * 
+     * @param string $class The fully-qualified class name. 
+     * @return mixed The mapped file name on success, or boolean false on 
+     * failure. 
+     */  
+    public function loadClass($class)  
+    {  
+        // the current namespace prefix  
+        $prefix = $class;  
+  
+        // work backwards through the namespace names of the fully-qualified  
+        // class name to find a mapped file name  
+        while (false !== $pos = strrpos($prefix, '\\')) {  
+  
+            // retain the trailing namespace separator in the prefix  
+            $prefix = substr($class, 0, $pos + 1);  
+  
+            // the rest is the relative class name  
+            $relative_class = substr($class, $pos + 1);  
+  
+            // try to load a mapped file for the prefix and relative class  
+            $mapped_file = $this->loadMappedFile($prefix, $relative_class);  
+            if ($mapped_file) {  
+                return $mapped_file;  
+            }  
+  
+            // remove the trailing namespace separator for the next iteration  
+            // of strrpos()  
+            $prefix = rtrim($prefix, '\\');     
+        }  
+  
+        // never found a mapped file  
+        return false;  
+    }  
+  
+    /** 
+     * Load the mapped file for a namespace prefix and relative class. 
+     *  
+     * @param string $prefix The namespace prefix. 
+     * @param string $relative_class The relative class name. 
+     * @return mixed Boolean false if no mapped file can be loaded, or the 
+     * name of the mapped file that was loaded. 
+     */  
+    protected function loadMappedFile($prefix, $relative_class)  
+    {  
+        // are there any base directories for this namespace prefix?  
+        if (isset($this->prefixes[$prefix]) === false) {  
+            return false;  
+        }  
+  
+        // look through base directories for this namespace prefix  
+        foreach ($this->prefixes[$prefix] as $base_dir) {  
+  
+            // replace the namespace prefix with the base directory,  
+            // replace namespace separators with directory separators  
+            // in the relative class name, append with .php  
+            $file = $base_dir  
+                  . str_replace('\\', DIRECTORY_SEPARATOR, $relative_class)  
+                  . '.php';  
+            $file = $base_dir  
+                  . str_replace('\\', '/', $relative_class)  
+                  . '.php';  
+  
+            // if the mapped file exists, require it  
+            if ($this->requireFile($file)) {  
+                // yes, we're done  
+                return $file;  
+            }  
+        }  
+  
+        // never found it  
+        return false;  
+    }  
+  
+    /** 
+     * If a file exists, require it from the file system. 
+     *  
+     * @param string $file The file to require. 
+     * @return bool True if the file exists, false if not. 
+     */  
+    protected function requireFile($file)  
+    {  
+        if (file_exists($file)) {  
+            require $file;  
+            return true;  
+        }  
+        return false;  
+    }  
+} 
+
+```
+> 测试用例
+
+```
+    <?php  
+    namespace Example\Tests;  
+      
+    class MockPsr4AutoloaderClass extends Psr4AutoloaderClass  
+    {  
+        protected $files = array();  
+      
+        public function setFiles(array $files)  
+        {  
+            $this->files = $files;  
+        }  
+      
+        protected function requireFile($file)  
+        {  
+            return in_array($file, $this->files);  
+        }  
+    }  
+      
+    class Psr4AutoloaderClassTest extends \PHPUnit_Framework_TestCase  
+    {  
+        protected $loader;  
+      
+        protected function setUp()  
+        {  
+            $this->loader = new MockPsr4AutoloaderClass;  
+      
+            $this->loader->setFiles(array(  
+                '/vendor/foo.bar/src/ClassName.php',  
+                '/vendor/foo.bar/src/DoomClassName.php',  
+                '/vendor/foo.bar/tests/ClassNameTest.php',  
+                '/vendor/foo.bardoom/src/ClassName.php',  
+                '/vendor/foo.bar.baz.dib/src/ClassName.php',  
+                '/vendor/foo.bar.baz.dib.zim.gir/src/ClassName.php',  
+            ));  
+      
+            $this->loader->addNamespace(  
+                'Foo\Bar',  
+                '/vendor/foo.bar/src'  
+            );  
+      
+            $this->loader->addNamespace(  
+                'Foo\Bar',  
+                '/vendor/foo.bar/tests'  
+            );  
+      
+            $this->loader->addNamespace(  
+                'Foo\BarDoom',  
+                '/vendor/foo.bardoom/src'  
+            );  
+      
+            $this->loader->addNamespace(  
+                'Foo\Bar\Baz\Dib',  
+                '/vendor/foo.bar.baz.dib/src'  
+            );  
+      
+            $this->loader->addNamespace(  
+                'Foo\Bar\Baz\Dib\Zim\Gir',  
+                '/vendor/foo.bar.baz.dib.zim.gir/src'  
+            );  
+        }  
+      
+        public function testExistingFile()  
+        {  
+            $actual = $this->loader->loadClass('Foo\Bar\ClassName');  
+            $expect = '/vendor/foo.bar/src/ClassName.php';  
+            $this->assertSame($expect, $actual);  
+      
+            $actual = $this->loader->loadClass('Foo\Bar\ClassNameTest');  
+            $expect = '/vendor/foo.bar/tests/ClassNameTest.php';  
+            $this->assertSame($expect, $actual);  
+        }  
+      
+        public function testMissingFile()  
+        {  
+            $actual = $this->loader->loadClass('No_Vendor\No_Package\NoClass');  
+            $this->assertFalse($actual);  
+        }  
+      
+        public function testDeepFile()  
+        {  
+            $actual = $this->loader->loadClass('Foo\Bar\Baz\Dib\Zim\Gir\ClassName');  
+            $expect = '/vendor/foo.bar.baz.dib.zim.gir/src/ClassName.php';  
+            $this->assertSame($expect, $actual);  
+        }  
+      
+        public function testConfusion()  
+        {  
+            $actual = $this->loader->loadClass('Foo\Bar\DoomClassName');  
+            $expect = '/vendor/foo.bar/src/DoomClassName.php';  
+            $this->assertSame($expect, $actual);  
+      
+            $actual = $this->loader->loadClass('Foo\BarDoom\ClassName');  
+            $expect = '/vendor/foo.bardoom/src/ClassName.php';  
+            $this->assertSame($expect, $actual);  
+        }  
+    }  
 
 
 
 ```
+
+> 关于单元测试用例
+
+* 单元通俗的说就是指一个实现简单功能的函数。单元测试就是只用一组特定的输入(测试用例)测试函数是否功能正常，并且返回了正确的输出
