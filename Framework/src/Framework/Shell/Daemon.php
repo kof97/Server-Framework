@@ -67,6 +67,8 @@ class Daemon
 	{
 		$pid = $this->daemon();
 
+		echo 'Start the server' . PHP_EOL;
+
 		while (true) {
 			sleep(1);
 
@@ -80,7 +82,7 @@ class Daemon
 			$pid = file_get_contents($this->pidfile);
 			unlink($this->pidfile);
 
-			echo 'The server has been already stop' . PHP_EOL;
+			echo 'Stop the server' . PHP_EOL;
 
 			posix_kill($pid, 9);
 		} else {
