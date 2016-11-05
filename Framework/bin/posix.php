@@ -2,8 +2,6 @@
 
 class TestPosix
 {
-	const LISTEN = 'tcp://localhost:9999';
-
 	protected $pidfile;
 
 	public function __construct()
