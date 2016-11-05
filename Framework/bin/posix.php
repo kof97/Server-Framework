@@ -1,15 +1,28 @@
 <?php
 
-class TestPosix {
+class TestPosix
+{
 	const LISTEN = 'tcp://localhost:9999';
 
 	protected $pidfile;
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->pidfile = './run/' . __CLASS__ . '.pid';
+
+		$this->signal();
 	}
 
-	private function daemon() {
+	private function signal()
+	{
+		pcntl_signal(SIGHUP, function ($signo) {
+			echo 'The server has been reload' . PHP_EOL;
+			Signal::set($signo);
+		});
+	}
+
+	private function daemon()
+	{
 		if (is_file($this->pidfile)) {
 			echo "The file $this->pidfile exists" . PHP_EOL;
 			echo 'It has already started ! !' . PHP_EOL;
@@ -29,11 +42,33 @@ class TestPosix {
 		}
 	}
 
-	private function start() {
-		$pid = $this->daemon();
+	private function run()
+	{
+		while (true) {
+			pcntl_signal_dispatch();
+
+			sleep(2);
+
+			if (Signal::get() == SIGHUP) {
+				Signal::reset();
+				break;
+			}
+		}
 	}
 
-	private function stop() {
+	private function start()
+	{
+		$pid = $this->daemon();
+
+		while (true) {
+			sleep(1);
+
+			$this->run();
+		}
+	}
+
+	private function stop()
+	{
 		if (is_file($this->pidfile)) {
 			$pid = file_get_contents($this->pidfile);
 			unlink($this->pidfile);
@@ -46,15 +81,28 @@ class TestPosix {
 		exit;
 	}
 
-	private function help() {
+	private function reload()
+	{
+		if (!is_file($this->pidfile)) {
+			echo 'Please start the server first' . PHP_EOL;
+			exit;
+		}
+
+		$pid = file_get_contents($this->pidfile);
+		posix_kill($pid, SIGHUP);
+	}
+
+	private function help()
+	{
 		echo 'Usage:' . PHP_EOL;
 		echo '- start | stop | help' . PHP_EOL;
 		exit;
 	}
 
-	public function init($argc, $argv) {
+	public function init($argc, $argv)
+	{
 		if ($argc < 2) {
-			echo 'Please input help' . PHP_EOL;
+			echo 'Please input params' . PHP_EOL;
 			exit;
 		}
 
@@ -66,6 +114,14 @@ class TestPosix {
 
 			case 'stop':
 				$this->stop();
+				break;
+
+			case 'reload':
+				$this->reload();
+				break;
+
+			case 'restart':
+				$this->restart();
 				break;
 
 			case 'help':

@@ -20,7 +20,7 @@ final class Signal
 
 	public static function get()
 	{
-		return(self::$signo);
+		return self::$signo;
 	}
 
 	public static function reset()
