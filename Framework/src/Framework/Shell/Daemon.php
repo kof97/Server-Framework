@@ -80,12 +80,12 @@ class Daemon
 			$pid = file_get_contents($this->pidfile);
 			unlink($this->pidfile);
 
+			echo 'The server has been already stop' . PHP_EOL;
+
 			posix_kill($pid, 9);
 		} else {
 			echo 'Not found the server ! !' . PHP_EOL;
 		}
-
-		exit;
 	}
 
 	private function reload()
@@ -99,10 +99,19 @@ class Daemon
 		posix_kill($pid, SIGHUP);
 	}
 
+	private function restart()
+	{
+		if (is_file($this->pidfile)) {
+			$this->stop();
+		}
+
+		$this->start();
+	}
+
 	private function help()
 	{
 		echo 'Usage:' . PHP_EOL;
-		echo '- start | stop | help' . PHP_EOL;
+		echo '- start | stop | restart | reload | help' . PHP_EOL;
 		exit;
 	}
 
