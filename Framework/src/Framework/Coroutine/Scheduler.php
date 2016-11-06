@@ -60,6 +60,7 @@ class Scheduler
         $task = new Task($tid, $coroutine);
         $this->taskMap[$tid] = $task;
         $this->schedule($task);
+
         return $tid;
     }
 
@@ -222,6 +223,7 @@ class Scheduler
             } else {
                 $this->ioPoll(0);
             }
+
             yield;
         }
     }
