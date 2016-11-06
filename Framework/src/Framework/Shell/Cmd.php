@@ -53,9 +53,7 @@ class Cmd
 
     private static function initRestful($conf, $root)
     {
-        $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-
-        $restful_root = $root . (isset($conf['restful_root']) ? $conf['restful_root'] : 'restful');
+        $restful_root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'restful');
 
         $resource_root = $restful_root . DIRECTORY_SEPARATOR . 'Resource';
         $model_root = $restful_root . DIRECTORY_SEPARATOR . 'Model';
