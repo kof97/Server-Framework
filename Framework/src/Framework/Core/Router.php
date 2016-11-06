@@ -6,11 +6,11 @@ use \Exception;
 use Framework\Base\RouteInterface;
 
 /**
- * Class Router.
+ * Class Monitor.
  *
  * @category PHP
  */
-class Router
+class Monitor
 {
     /**
      * @var The instance of Route.
