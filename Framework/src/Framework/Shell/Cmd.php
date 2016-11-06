@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Common;
+namespace Framework\Shell;
 
 use \Exception;
 use Framework\Common\File;
