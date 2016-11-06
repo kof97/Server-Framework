@@ -75,7 +75,7 @@ class Scheduler
      */
     public function run()
     {
-        $this->newTask($this->poll->ioPollTask());
+        // $this->newTask($this->poll->ioPollTask());
 
         while (!$this->taskQueue->isEmpty()) {
             $task = $this->taskQueue->dequeue();
