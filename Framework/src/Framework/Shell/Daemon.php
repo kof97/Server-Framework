@@ -152,8 +152,4 @@ class Daemon
 	}
 }
 
-$test = new TestPosix();
-
-$test->init($argc, $argv);
-
 // end of script
