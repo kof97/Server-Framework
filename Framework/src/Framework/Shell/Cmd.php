@@ -40,7 +40,7 @@ class Cmd
         $run = $root . 'run';
         $log = $root . 'log';
 
-        is_dir($run) || File::makeDir($run);        
+        is_dir($run) || File::makeDir($run);
         is_dir($log) || File::makeDir($log);
 
         if (!isset($conf[$mode])) {
