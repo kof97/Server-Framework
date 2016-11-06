@@ -5,7 +5,7 @@ namespace Framework;
 use \Exception;
 use Framework\Common\File;
 use Framework\Common\Loader;
-use Framework\Core\Router;
+use Framework\Core\Monitor;
 use Framework\Resource\Route;
 
 /**
@@ -59,11 +59,11 @@ class Application
 
         Loader::register(array('Resource', 'Model'), $restful_root);
 
-        $router = new Router();
+        $monitor = new Monitor();
 
-        $router->setRoute(new Route());
+        $monitor->setRoute(new Route());
 
-        $router->run();
+        $monitor->run();
     }
 }
 
