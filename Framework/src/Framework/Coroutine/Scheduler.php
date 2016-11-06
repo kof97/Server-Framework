@@ -92,6 +92,7 @@ class Scheduler
                     $task->setException($e);
                     $this->schedule($task);
                 }
+
                 continue;
             }
 
