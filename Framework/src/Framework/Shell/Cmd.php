@@ -35,6 +35,14 @@ class Cmd
             throw new Exception("Please check your config, '($root)' is not exist");
         }
 
+        $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+        $run = $root . 'run';
+        $log = $root . 'log';
+
+        is_dir($run) || File::makeDir($run);        
+        is_dir($log) || File::makeDir($log);
+
         if (!isset($conf[$mode])) {
             throw new Exception("Not found the mode ['{$mode}']");
         }
@@ -53,10 +61,10 @@ class Cmd
 
     private static function initRestful($conf, $root)
     {
-        $restful_root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'restful');
+        $restful_root = $root . 'restful' . DIRECTORY_SEPARATOR;
 
-        $resource_root = $restful_root . DIRECTORY_SEPARATOR . 'Resource';
-        $model_root = $restful_root . DIRECTORY_SEPARATOR . 'Model';
+        $resource_root = $restful_root . 'Resource';
+        $model_root = $restful_root . 'Model';
 
         is_dir($resource_root) || File::makeDir($resource_root);
         is_dir($model_root) || File::makeDir($model_root);
