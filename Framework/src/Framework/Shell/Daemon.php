@@ -15,7 +15,7 @@ class Daemon
 
     public function __construct()
     {
-        $this->pidfile = '../run/' . __CLASS__ . '.pid';
+        $this->pidfile = '../run/FrameServer.pid';
 
         $this->signal();
     }
