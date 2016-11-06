@@ -127,6 +127,11 @@ class Scheduler
         return true;
     }
 
+    /**
+     * Get the task queue.
+     *
+     * @return array
+     */
     public function getTaskQueue()
     {
         return $this->taskQueue;

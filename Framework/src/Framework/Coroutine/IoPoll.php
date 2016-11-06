@@ -29,6 +29,8 @@ class IoPoll
 
     /**
      * Init Scheduler.
+     *
+     * @param Scheduler $schedule The obj of Scheduler.
      */
     public function __construct(Scheduler $schedule)
     {
