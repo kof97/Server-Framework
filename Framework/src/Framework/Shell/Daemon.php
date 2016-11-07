@@ -15,6 +15,8 @@ class Daemon
 
     public function __construct()
     {
+        $this->checkSystem();
+
         $this->pidfile = '../run/FrameServer.pid';
 
         $this->signal();
@@ -144,6 +146,14 @@ class Daemon
 
             default:
                 break;
+        }
+    }
+
+    private function checkSystem()
+    {
+        if (!function_exists('pcntl_fork')) {
+            echo 'Your system can\'t support portable operating system interface of Unix ! !' . PHP_EOL;
+            exit;
         }
     }
 }
