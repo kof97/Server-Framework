@@ -91,8 +91,7 @@ class Daemon
     private function reload()
     {
         if (!is_file($this->pidfile)) {
-            echo 'Please start the server first' . PHP_EOL;
-            exit;
+            exit('Please start the server first' . PHP_EOL);
         }
 
         $pid = file_get_contents($this->pidfile);
@@ -118,8 +117,7 @@ class Daemon
     public function init($argc, $argv)
     {
         if ($argc < 2) {
-            echo 'Please input params' . PHP_EOL;
-            exit;
+            exit('Please input params' . PHP_EOL);
         }
 
         $cmd = $argv[1];
@@ -151,9 +149,12 @@ class Daemon
 
     private function checkSystem()
     {
+        if (strpos(PHP_SAPI, 'cli') === false) {
+            exit('Only run in command line mode ! !' . PHP_EOL);
+        }
+
         if (!function_exists('pcntl_fork')) {
-            echo 'Your system can\'t support portable operating system interface of Unix ! !' . PHP_EOL;
-            exit;
+            exit('Your system can\'t support portable operating system interface of Unix ! !' . PHP_EOL);
         }
     }
 }
