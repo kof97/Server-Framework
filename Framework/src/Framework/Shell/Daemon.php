@@ -18,6 +18,7 @@ class Daemon
         $this->checkSystem();
 
         $this->pidfile = '../run/FrameServer.pid';
+        $this->setProcessTitle('FrameServer');
 
         $this->signal();
     }
@@ -155,6 +156,16 @@ class Daemon
 
         if (!function_exists('pcntl_fork')) {
             exit('Your system can\'t support portable operating system interface of Unix ! !' . PHP_EOL);
+        }
+    }
+
+    private function setProcessTitle($title)
+    {
+        // >= php 5.5
+        if (function_exists('cli_set_process_title')) {
+            @cli_set_process_title($title);
+        } elseif (extension_loaded('proctitle') && function_exists('setproctitle')) {
+            @setproctitle($title);
         }
     }
 }
