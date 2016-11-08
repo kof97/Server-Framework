@@ -168,6 +168,15 @@ class Daemon
             @setproctitle($title);
         }
     }
+
+    private function log($msg)
+    {
+        $msg = $msg . "\n";
+        if (!self::$daemonize) {
+            echo $msg;
+        }
+        file_put_contents(self::$logFile, date('Y-m-d H:i:s') . ' ' . 'pid:'. posix_getpid() . ' ' . $msg, FILE_APPEND | LOCK_EX);
+    }
 }
 
 // end of script
