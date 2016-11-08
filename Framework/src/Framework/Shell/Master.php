@@ -5,20 +5,26 @@ namespace Framework\Shell;
 use Framework\Shell\Signal;
 
 /**
- * Class Daemon.
+ * Class Master.
  *
  * @category PHP
  */
-class Daemon
+class Master
 {
-    protected $pidfile;
+    const SERVER_NAME = 'FrameServer';
+
+    protected $pidFile;
+
+    private $workers = array();
+
+    private $daemonize = false;
 
     public function __construct()
     {
         $this->checkSystem();
 
-        $this->pidfile = '../run/FrameServer.pid';
-        $this->setProcessTitle('FrameServer');
+        $this->pidFile = '../run/' . self::SERVER_NAME . '.pid';
+        $this->setProcessTitle(self::SERVER_NAME);
 
         $this->signal();
     }
@@ -33,8 +39,8 @@ class Daemon
 
     private function daemon()
     {
-        if (is_file($this->pidfile)) {
-            echo "The file $this->pidfile exists" . PHP_EOL;
+        if (is_file($this->pidFile)) {
+            echo "The file $this->pidFile exists" . PHP_EOL;
             echo 'It has already started ! !' . PHP_EOL;
             exit;
         }
@@ -46,7 +52,7 @@ class Daemon
             // pcntl_wait($status);
             exit;
         } else {
-            file_put_contents($this->pidfile, getmypid());
+            file_put_contents($this->pidFile, getmypid());
 
             return getmypid();
         }
@@ -79,9 +85,9 @@ class Daemon
 
     private function stop()
     {
-        if (is_file($this->pidfile)) {
-            $pid = file_get_contents($this->pidfile);
-            unlink($this->pidfile);
+        if (is_file($this->pidFile)) {
+            $pid = file_get_contents($this->pidFile);
+            unlink($this->pidFile);
 
             posix_kill($pid, 9);
         } else {
@@ -91,27 +97,39 @@ class Daemon
 
     private function reload()
     {
-        if (!is_file($this->pidfile)) {
+        if (!is_file($this->pidFile)) {
             exit('Please start the server first' . PHP_EOL);
         }
 
-        $pid = file_get_contents($this->pidfile);
+        $pid = file_get_contents($this->pidFile);
         posix_kill($pid, SIGHUP);
     }
 
     private function restart()
     {
-        if (is_file($this->pidfile)) {
+        if (is_file($this->pidFile)) {
             $this->stop();
         }
 
         $this->start();
     }
 
+    private function status()
+    {
+        if (!is_file($this->pidFile)) {
+            exit('Server is not running' . PHP_EOL);
+        }
+
+        echo 'Server ' . self::SERVER_NAME . 'is running' . PHP_EOL;
+        echo '- PHP version: ' . PHP_VERSION . PHP_EOL;
+        echo '- Process ID: ' . PHP_EOL;
+
+    }
+
     private function help()
     {
         echo 'Usage:' . PHP_EOL;
-        echo '- start | stop | restart | reload | help' . PHP_EOL;
+        echo '- start | stop | restart | reload | status | help' . PHP_EOL;
         exit;
     }
 
@@ -137,6 +155,10 @@ class Daemon
 
             case 'restart':
                 $this->restart();
+                break;
+
+            case 'status':
+                $this->status();
                 break;
 
             case 'help':
@@ -175,6 +197,7 @@ class Daemon
         if (!self::$daemonize) {
             echo $msg;
         }
+
         file_put_contents(self::$logFile, date('Y-m-d H:i:s') . ' ' . 'pid:'. posix_getpid() . ' ' . $msg, FILE_APPEND | LOCK_EX);
     }
 }
