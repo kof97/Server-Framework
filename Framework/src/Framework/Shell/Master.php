@@ -101,8 +101,7 @@ class Master
 
     private function checkWorkers()
     {
-        $workers_num = count($this->workers);
-        while ($workers_num < $this->count) {
+        while (count($this->workers) < $this->count) {
             $this->forkOneWorker();
         }
     }
@@ -120,7 +119,7 @@ class Master
             $this->pidFileList[$pid] = $this->runTimeRoot . 'Worker_' . $pid . '.pid';
             file_put_contents($this->pidFileList[$pid], $pid);
         } else {
-            // for child
+            $this->count = 0;
         }
     }
 
