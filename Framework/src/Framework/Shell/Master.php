@@ -15,6 +15,11 @@ class Master
 
     protected $pidFile;
 
+    private $count = 4;
+
+    /**
+     * @var ['worker_pid' => obj]
+     */
     private $workers = array();
 
     private $daemonize = false;
@@ -60,15 +65,46 @@ class Master
 
     private function run()
     {
+        $this->loadConf();
+        $this->initWorkers();
+
         while (true) {
             pcntl_signal_dispatch();
 
             sleep(2);
 
+
+
             if (Signal::get() == SIGHUP) {
                 Signal::reset();
                 break;
             }
+        }
+    }
+
+    private function loadConf()
+    {
+
+    }
+
+    private function initWorkers()
+    {
+        $workers_num = count($this->workers);
+        while ($workers_num < $this->count) {
+            $this->forkOneWorker();
+        }
+    }
+
+    private function forkOneWorker()
+    {
+        $pid = pcntl_fork();
+
+        $worker = new Worker();
+
+        if ($pid > 0) {
+            $this->workers[$pid] = $worker;
+        } else if ($pid === 0) {
+            
         }
     }
 
