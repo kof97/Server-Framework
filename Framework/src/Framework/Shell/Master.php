@@ -13,6 +13,9 @@ class Master
 {
     const SERVER_NAME = 'FrameServer';
 
+    /**
+     * @var ['worker_pid' => 'filename']
+     */
     protected $count = 4;
 
     protected $runTimeRoot = '../run/';
@@ -22,26 +25,23 @@ class Master
     /**
      * @var ['worker_pid' => 'filename']
      */
-    protected $pidFileList = array();
+    protected static $pidFileList = array();
 
     /**
      * @var ['worker_pid' => obj]
      */
-    private $workers = array();
+    protected static $workers = array();
 
-    private $daemonize = false;
+    protected $daemonize = false;
 
     public function __construct()
     {
         $this->checkSystem();
 
         $this->masterPidFile = $this->runTimeRoot . self::SERVER_NAME . '.pid';
-        $this->setProcessTitle(self::SERVER_NAME);
-
-        $this->signal();
     }
 
-    private function signal()
+    protected function signal()
     {
         pcntl_signal(SIGHUP, function ($signo) {
             echo 'The server has been reload' . PHP_EOL;
@@ -49,7 +49,7 @@ class Master
         });
     }
 
-    private function daemon()
+    protected function daemon()
     {
         if (is_file($this->masterPidFile)) {
             echo "The file $this->masterPidFile exists" . PHP_EOL;
@@ -65,13 +65,15 @@ class Master
             exit;
         } else {
             file_put_contents($this->masterPidFile, getmypid());
+            $this->setProcessTitle('Master: ' . self::SERVER_NAME);
 
             return getmypid();
         }
     }
 
-    private function run()
+    protected function run()
     {
+        $this->signal();
         $this->loadConf();
         $this->initWorkers();
 
@@ -89,24 +91,26 @@ class Master
         }
     }
 
-    private function loadConf()
+    protected function loadConf()
     {
 
     }
 
-    private function initWorkers()
+    protected function initWorkers()
     {
         $this->checkWorkers();
+
+        echo PHP_EOL . 'Init the server successful' . PHP_EOL;
     }
 
-    private function checkWorkers()
+    protected function checkWorkers()
     {
-        while (count($this->workers) < $this->count) {
+        while (count(self::$workers) < $this->count) {
             $this->forkOneWorker();
         }
     }
 
-    private function forkOneWorker()
+    protected function forkOneWorker()
     {
         $pid = pcntl_fork();
 
@@ -115,15 +119,16 @@ class Master
         if ($pid < 0) {
             exit('Fork fail');
         } else if ($pid > 0) {
-            $this->workers[$pid] = $worker;
-            $this->pidFileList[$pid] = $this->runTimeRoot . 'Worker_' . $pid . '.pid';
-            file_put_contents($this->pidFileList[$pid], $pid);
+            self::$workers[$pid] = $worker;
+            self::$pidFileList[$pid] = $this->runTimeRoot . 'Worker_' . $pid . '.pid';
+            file_put_contents(self::$pidFileList[$pid], $pid);
         } else {
+            $this->setProcessTitle('Worker: ' . self::SERVER_NAME);
             $this->count = 0;
         }
     }
 
-    private function start()
+    protected function start()
     {
         $pid = $this->daemon();
 
@@ -134,11 +139,34 @@ class Master
         }
     }
 
-    private function stop()
+    protected function stop()
     {
+        exec("ps aux | grep run.php | awk '{print $2}'", $output);
+        $total = 0;
+
+        foreach ($output as $value) {
+            $pid_file = $this->runTimeRoot . 'Worker_' . $value . '.pid';
+            if (is_file($pid_file)) {
+                $pid = file_get_contents($pid_file);
+                unlink($pid_file);
+
+                $total++;
+                echo '- Kill the process Worker_' . $value . PHP_EOL;
+
+                posix_kill($pid, 9);
+            }
+        }
+
+        if ($total > 0) {
+            echo PHP_EOL . 'Total kill ' . $total . ' worker process' . PHP_EOL . PHP_EOL;
+        }
+
         if (is_file($this->masterPidFile)) {
             $pid = file_get_contents($this->masterPidFile);
             unlink($this->masterPidFile);
+
+            echo '* Kill the master process' . PHP_EOL . PHP_EOL;
+            echo '* Done' . PHP_EOL . PHP_EOL;
 
             posix_kill($pid, 9);
         } else {
@@ -146,7 +174,7 @@ class Master
         }
     }
 
-    private function reload()
+    protected function reload()
     {
         if (!is_file($this->masterPidFile)) {
             exit('Please start the server first' . PHP_EOL);
@@ -156,7 +184,7 @@ class Master
         posix_kill($pid, SIGHUP);
     }
 
-    private function restart()
+    protected function restart()
     {
         if (is_file($this->masterPidFile)) {
             $this->stop();
@@ -165,7 +193,7 @@ class Master
         $this->start();
     }
 
-    private function status()
+    protected function status()
     {
         if (!is_file($this->masterPidFile)) {
             exit('Server is not running' . PHP_EOL);
@@ -177,7 +205,7 @@ class Master
 
     }
 
-    private function help()
+    protected function help()
     {
         echo 'Usage:' . PHP_EOL;
         echo '- start | stop | restart | reload | status | help' . PHP_EOL;
@@ -221,7 +249,7 @@ class Master
         }
     }
 
-    private function checkSystem()
+    protected function checkSystem()
     {
         if (strpos(PHP_SAPI, 'cli') === false) {
             exit('Only run in command line mode ! !' . PHP_EOL);
@@ -232,7 +260,7 @@ class Master
         }
     }
 
-    private function setProcessTitle($title)
+    protected function setProcessTitle($title)
     {
         // >= php 5.5
         if (function_exists('cli_set_process_title')) {
@@ -242,7 +270,7 @@ class Master
         }
     }
 
-    private function log($msg)
+    protected function log($msg)
     {
         $msg = $msg . "\n";
         if (!self::$daemonize) {
