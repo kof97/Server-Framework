@@ -13,9 +13,16 @@ class Master
 {
     const SERVER_NAME = 'FrameServer';
 
-    protected $pidFile;
+    protected $count = 4;
 
-    private $count = 4;
+    protected $runTimeRoot = '../run/';
+
+    protected $masterPidFile = null;
+
+    /**
+     * @var ['worker_pid' => 'filename']
+     */
+    protected $pidFileList = array();
 
     /**
      * @var ['worker_pid' => obj]
@@ -28,7 +35,7 @@ class Master
     {
         $this->checkSystem();
 
-        $this->pidFile = '../run/' . self::SERVER_NAME . '.pid';
+        $this->masterPidFile = $this->runTimeRoot . self::SERVER_NAME . '.pid';
         $this->setProcessTitle(self::SERVER_NAME);
 
         $this->signal();
@@ -44,8 +51,8 @@ class Master
 
     private function daemon()
     {
-        if (is_file($this->pidFile)) {
-            echo "The file $this->pidFile exists" . PHP_EOL;
+        if (is_file($this->masterPidFile)) {
+            echo "The file $this->masterPidFile exists" . PHP_EOL;
             echo 'It has already started ! !' . PHP_EOL;
             exit;
         }
@@ -57,7 +64,7 @@ class Master
             // pcntl_wait($status);
             exit;
         } else {
-            file_put_contents($this->pidFile, getmypid());
+            file_put_contents($this->masterPidFile, getmypid());
 
             return getmypid();
         }
@@ -101,10 +108,14 @@ class Master
 
         $worker = new Worker();
 
-        if ($pid > 0) {
+        if ($pid < 0) {
+            exit('Fork fail');
+        } else if ($pid > 0) {
             $this->workers[$pid] = $worker;
-        } else if ($pid === 0) {
-            
+            $this->pidFileList[$pid] = $this->runTimeRoot . 'Worker_' . $pid . '.pid';
+            file_put_contents($this->pidFileList[$pid], $pid);
+        } else {
+            // for child
         }
     }
 
@@ -121,9 +132,9 @@ class Master
 
     private function stop()
     {
-        if (is_file($this->pidFile)) {
-            $pid = file_get_contents($this->pidFile);
-            unlink($this->pidFile);
+        if (is_file($this->masterPidFile)) {
+            $pid = file_get_contents($this->masterPidFile);
+            unlink($this->masterPidFile);
 
             posix_kill($pid, 9);
         } else {
@@ -133,17 +144,17 @@ class Master
 
     private function reload()
     {
-        if (!is_file($this->pidFile)) {
+        if (!is_file($this->masterPidFile)) {
             exit('Please start the server first' . PHP_EOL);
         }
 
-        $pid = file_get_contents($this->pidFile);
+        $pid = file_get_contents($this->masterPidFile);
         posix_kill($pid, SIGHUP);
     }
 
     private function restart()
     {
-        if (is_file($this->pidFile)) {
+        if (is_file($this->masterPidFile)) {
             $this->stop();
         }
 
@@ -152,7 +163,7 @@ class Master
 
     private function status()
     {
-        if (!is_file($this->pidFile)) {
+        if (!is_file($this->masterPidFile)) {
             exit('Server is not running' . PHP_EOL);
         }
 
