@@ -96,6 +96,11 @@ class Master
 
     private function initWorkers()
     {
+        $this->checkWorkers();
+    }
+
+    private function checkWorkers()
+    {
         $workers_num = count($this->workers);
         while ($workers_num < $this->count) {
             $this->forkOneWorker();
