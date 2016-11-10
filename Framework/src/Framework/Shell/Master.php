@@ -218,9 +218,9 @@ class Master
         foreach ($output as $pid) {
             if (is_file($this->runTimeRoot . 'Worker_' . $pid . '.pid')) {
                 echo str_pad('- Worker Process ID: ' . $pid, 30, ' ') . "\033[32m [running] \033[0m" . PHP_EOL;
-            }
 
-            $total++;
+                $total++;
+            }
         }
 
         echo PHP_EOL . '* Total ' . $total . ' worker process' . PHP_EOL . PHP_EOL;
