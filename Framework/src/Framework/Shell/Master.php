@@ -77,14 +77,18 @@ class Master
     {
         $this->signal();
         $this->loadConf();
-        $this->initWorkers();
 
         while (true) {
+            if ($this->isMaster === false) {
+                exit;
+            }
+
+            $this->checkWorkers();
+
             pcntl_signal_dispatch();
 
+
             sleep(2);
-
-
 
             if (Signal::get() == SIGHUP) {
                 Signal::reset();
@@ -100,19 +104,17 @@ class Master
 
     protected function initWorkers()
     {
-        $this->checkWorkers();
-
-        echo PHP_EOL . 'Init the server successful' . PHP_EOL;
+        
     }
 
     protected function checkWorkers()
     {
-        while (count($this->$workers) < $this->count) {
-            $this->forkOneWorker();
+        while (count($this->workers) < $this->count) {
+            $this->forkWorker();
         }
     }
 
-    protected function forkOneWorker()
+    protected function forkWorker()
     {
         $pid = pcntl_fork();
 
@@ -121,7 +123,7 @@ class Master
         if ($pid < 0) {
             exit('Fork fail');
         } else if ($pid > 0) {
-            $this->$workers[$pid] = $worker;
+            $this->workers[$pid] = $worker;
             $this->pidFileList[$pid] = $this->runTimeRoot . 'Worker_' . $pid . '.pid';
             file_put_contents($this->pidFileList[$pid], $pid);
         } else {
@@ -156,7 +158,7 @@ class Master
                 unlink($pid_file);
 
                 $total++;
-                echo '- Kill the process Worker_' . $value . PHP_EOL;
+                echo str_pad('- Kill the process Worker_' . $value, 35, ' ') . "\033[32m [success] \033[0m" . PHP_EOL;
 
                 posix_kill($pid, 9);
             }
@@ -170,7 +172,7 @@ class Master
             $pid = file_get_contents($this->masterPidFile);
             unlink($this->masterPidFile);
 
-            echo '* Kill the master process' . PHP_EOL . PHP_EOL;
+            echo str_pad('* Kill the master process', 30, ' ') . "\033[32m [success] \033[0m" . PHP_EOL . PHP_EOL;
             echo '* Done' . PHP_EOL . PHP_EOL;
 
             posix_kill($pid, 9);
@@ -204,10 +206,24 @@ class Master
             exit('Server is not running' . PHP_EOL);
         }
 
-        echo 'Server ' . self::SERVER_NAME . 'is running' . PHP_EOL;
-        echo '- PHP version: ' . PHP_VERSION . PHP_EOL;
-        echo '- Process ID: ' . PHP_EOL;
+        $master_pid = file_get_contents($this->masterPidFile);
 
+        echo 'Server ' . self::SERVER_NAME . 'is running' . PHP_EOL;
+        echo '* PHP version: ' . PHP_VERSION . PHP_EOL . PHP_EOL;
+        echo str_pad('* Master Process ID: ' . $master_pid, 30, ' ') . "\033[32m [running] \033[0m" . PHP_EOL . PHP_EOL;
+
+        exec("ps aux | grep run.php | awk '{print $2}'", $output);
+        $total = 0;
+
+        foreach ($output as $pid) {
+            if (is_file($this->runTimeRoot . 'Worker_' . $pid . '.pid')) {
+                echo str_pad('- Worker Process ID: ' . $pid, 30, ' ') . "\033[32m [running] \033[0m" . PHP_EOL;
+            }
+
+            $total++;
+        }
+
+        echo PHP_EOL . '* Total ' . $total . ' worker process' . PHP_EOL . PHP_EOL;
     }
 
     protected function help()
