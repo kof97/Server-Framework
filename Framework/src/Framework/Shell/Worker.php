@@ -11,7 +11,14 @@ class Worker
 {
     public function __construct()
     {
-        
+
+    }
+
+    public function run()
+    {
+        while (true) {
+            sleep(5);
+        }
     }
 }
 

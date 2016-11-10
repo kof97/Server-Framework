@@ -25,12 +25,14 @@ class Master
     /**
      * @var ['worker_pid' => 'filename']
      */
-    protected static $pidFileList = array();
+    protected $pidFileList = array();
 
     /**
      * @var ['worker_pid' => obj]
      */
-    protected static $workers = array();
+    protected $workers = array();
+
+    protected $isMaster = true;
 
     protected $daemonize = false;
 
@@ -105,7 +107,7 @@ class Master
 
     protected function checkWorkers()
     {
-        while (count(self::$workers) < $this->count) {
+        while (count($this->$workers) < $this->count) {
             $this->forkOneWorker();
         }
     }
@@ -119,12 +121,15 @@ class Master
         if ($pid < 0) {
             exit('Fork fail');
         } else if ($pid > 0) {
-            self::$workers[$pid] = $worker;
-            self::$pidFileList[$pid] = $this->runTimeRoot . 'Worker_' . $pid . '.pid';
-            file_put_contents(self::$pidFileList[$pid], $pid);
+            $this->$workers[$pid] = $worker;
+            $this->pidFileList[$pid] = $this->runTimeRoot . 'Worker_' . $pid . '.pid';
+            file_put_contents($this->pidFileList[$pid], $pid);
         } else {
             $this->setProcessTitle('Worker: ' . self::SERVER_NAME);
+            $this->isMaster = false;
             $this->count = 0;
+
+            $worker->run();
         }
     }
 
