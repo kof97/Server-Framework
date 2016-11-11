@@ -13,14 +13,14 @@ class Master
 {
     const SERVER_NAME = 'FrameServer';
 
+    const RUN_TIME = '../run/';
+
+    const CONF_PATH = '../conf/server.ini';
+
     /**
      * @var worker num
      */
     protected $count = 0;
-
-    protected $runTimeRoot = '../run/';
-
-    protected $confPath = '../conf/server.ini';
 
     protected $masterPidFile = null;
 
@@ -45,7 +45,7 @@ class Master
         $this->checkSystem();
         $this->signal();
 
-        $this->masterPidFile = $this->runTimeRoot . self::SERVER_NAME . '.pid';
+        $this->masterPidFile = self::RUN_TIME . self::SERVER_NAME . '.pid';
     }
 
     protected function signal()
@@ -104,11 +104,11 @@ class Master
             return;
         }
 
-        if (!is_file($this->confPath)) {
+        if (!is_file(self::CONF_PATH)) {
             exit('Not found the config' . PHP_EOL);
         }
 
-        $ini = parse_ini_file($this->confPath, true);
+        $ini = parse_ini_file(self::CONF_PATH, true);
 
         $this->count = $ini['base']['worker'];
     }
@@ -142,7 +142,7 @@ class Master
         }
 
         if ($this->isMaster === false) {
-            $pid_file = $this->runTimeRoot . 'Worker_' . $this->pid . '.pid';
+            $pid_file = self::RUN_TIME . 'Worker_' . $this->pid . '.pid';
             if (is_file($pid_file)) {
                 unlink($pid_file);
             }
@@ -168,7 +168,7 @@ class Master
             exit('Fork fail');
         } else if ($pid > 0) {
             $this->workers[$pid] = 1;
-            $this->pidFileList[$pid] = $this->runTimeRoot . 'Worker_' . $pid . '.pid';
+            $this->pidFileList[$pid] = self::RUN_TIME . 'Worker_' . $pid . '.pid';
             file_put_contents($this->pidFileList[$pid], $pid);
         } else {
             $this->setProcessTitle('Worker: ' . self::SERVER_NAME);
@@ -182,7 +182,7 @@ class Master
 
     protected function shutdownWorker($num)
     {
-
+        // todo
     }
 
     protected function start()
@@ -202,7 +202,7 @@ class Master
         $total = 0;
 
         foreach ($output as $value) {
-            $pid_file = $this->runTimeRoot . 'Worker_' . $value . '.pid';
+            $pid_file = self::RUN_TIME . 'Worker_' . $value . '.pid';
             if (is_file($pid_file)) {
                 $pid = file_get_contents($pid_file);
                 unlink($pid_file);
@@ -266,7 +266,7 @@ class Master
         $total = 0;
 
         foreach ($output as $pid) {
-            if (is_file($this->runTimeRoot . 'Worker_' . $pid . '.pid')) {
+            if (is_file(self::RUN_TIME . 'Worker_' . $pid . '.pid')) {
                 echo str_pad('- Worker Process ID: ' . $pid, 30, ' ') . "\033[32m [running] \033[0m" . PHP_EOL;
 
                 $total++;
