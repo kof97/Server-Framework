@@ -14,11 +14,13 @@ class Master
     const SERVER_NAME = 'FrameServer';
 
     /**
-     * @var ['worker_pid' => 'filename']
+     * @var worker num
      */
-    protected $count = 4;
+    protected $count = 0;
 
     protected $runTimeRoot = '../run/';
+
+    protected $confPath = '../conf/server.ini';
 
     protected $masterPidFile = null;
 
@@ -32,6 +34,8 @@ class Master
      */
     protected $workers = array();
 
+    protected $pid = null;
+
     protected $isMaster = true;
 
     protected $daemonize = false;
@@ -39,6 +43,7 @@ class Master
     public function __construct()
     {
         $this->checkSystem();
+        $this->signal();
 
         $this->masterPidFile = $this->runTimeRoot . self::SERVER_NAME . '.pid';
     }
@@ -46,7 +51,7 @@ class Master
     protected function signal()
     {
         pcntl_signal(SIGHUP, function ($signo) {
-            echo 'The server has been reload' . PHP_EOL;
+            echo 'The server will be reloaded after 1s' . PHP_EOL;
             Signal::set($signo);
         });
     }
@@ -69,20 +74,15 @@ class Master
             file_put_contents($this->masterPidFile, getmypid());
             $this->setProcessTitle('Master: ' . self::SERVER_NAME);
 
-            return getmypid();
+            $this->pid = getmypid();
         }
     }
 
     protected function run()
     {
-        $this->signal();
         $this->loadConf();
 
         while (true) {
-            if ($this->isMaster === false) {
-                exit;
-            }
-
             $this->checkWorkers();
 
             pcntl_signal_dispatch();
@@ -99,7 +99,18 @@ class Master
 
     protected function loadConf()
     {
+        if ($this->isMaster === false) {
+            // todo, something wrong
+            return;
+        }
 
+        if (!is_file($this->confPath)) {
+            exit('Not found the config' . PHP_EOL);
+        }
+
+        $ini = parse_ini_file($this->confPath, true);
+
+        $this->count = $ini['base']['worker'];
     }
 
     protected function initWorkers()
@@ -109,8 +120,40 @@ class Master
 
     protected function checkWorkers()
     {
+        $unset_list = array();
+        foreach ($this->pidFileList as $pid => $file) {
+            if (!is_file($file)) {
+                array_push($unset_list, $pid);
+            }
+        }
+
+        foreach ($unset_list as $pid) {
+            if (isset($this->workers[$pid])) {
+                unset($this->workers[$pid]);
+            }
+
+            if (isset($this->pidFileList[$pid])) {
+                unset($this->pidFileList[$pid]);
+            }
+        }
+
         while (count($this->workers) < $this->count) {
             $this->forkWorker();
+        }
+
+        if ($this->isMaster === false) {
+            $pid_file = $this->runTimeRoot . 'Worker_' . $this->pid . '.pid';
+            if (is_file($pid_file)) {
+                unlink($pid_file);
+            }
+
+            posix_kill($this->pid, 9);
+            exit;
+        }
+
+        $shutdown_num = count($this->workers) - $this->count;
+        if ($shutdown_num > 0) {
+            $this->shutdownWorker($shutdown_num);
         }
     }
 
@@ -121,23 +164,30 @@ class Master
         $worker = new Worker();
 
         if ($pid < 0) {
+            // todo log
             exit('Fork fail');
         } else if ($pid > 0) {
-            $this->workers[$pid] = $worker;
+            $this->workers[$pid] = 1;
             $this->pidFileList[$pid] = $this->runTimeRoot . 'Worker_' . $pid . '.pid';
             file_put_contents($this->pidFileList[$pid], $pid);
         } else {
             $this->setProcessTitle('Worker: ' . self::SERVER_NAME);
             $this->isMaster = false;
             $this->count = 0;
+            $this->pid = posix_getpid();
 
             $worker->run();
         }
     }
 
+    protected function shutdownWorker($num)
+    {
+
+    }
+
     protected function start()
     {
-        $pid = $this->daemon();
+        $this->daemon();
 
         while (true) {
             sleep(1);
@@ -208,7 +258,7 @@ class Master
 
         $master_pid = file_get_contents($this->masterPidFile);
 
-        echo 'Server ' . self::SERVER_NAME . 'is running' . PHP_EOL;
+        echo 'Server ' . self::SERVER_NAME . ' is running' . PHP_EOL;
         echo '* PHP version: ' . PHP_VERSION . PHP_EOL . PHP_EOL;
         echo str_pad('* Master Process ID: ' . $master_pid, 30, ' ') . "\033[32m [running] \033[0m" . PHP_EOL . PHP_EOL;
 
