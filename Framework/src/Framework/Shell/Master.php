@@ -286,7 +286,7 @@ class Master
     public function init($argc, $argv)
     {
         if ($argc < 2) {
-            exit('Please input params' . PHP_EOL);
+            $this->help();
         }
 
         $cmd = $argv[1];
