@@ -9,6 +9,13 @@ namespace Framework\Shell;
  */
 class Worker
 {
+    protected $eventLoops = array(
+        'libevent',
+        'event',
+        'ev',
+        'select'
+    );
+
     public function __construct()
     {
 
