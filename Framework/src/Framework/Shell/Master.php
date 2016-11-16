@@ -17,6 +17,17 @@ class Master
 
     const CONF_PATH = '../conf/server.ini';
 
+    public static $globalEvent = null;
+
+    protected $eventLoops = array(
+        'libevent',
+        'event',
+        'ev',
+        'select'
+    );
+
+    protected $eventLoopName;
+
     /**
      * @var worker num
      */
@@ -113,11 +124,6 @@ class Master
         $this->count = $ini['base']['worker'];
     }
 
-    protected function initWorkers()
-    {
-        
-    }
-
     protected function checkWorkers()
     {
         $unset_list = array();
@@ -185,10 +191,29 @@ class Master
         // todo
     }
 
+    protected function initGlobalEvent()
+    {
+        if (!self::$globalEvent) {
+            $event_class = '\\Framework\\Event\\' . ucfirst($this->getEventLoopName());
+
+            if (!$this->getEventLoopName()) {
+                exit('no extension');
+            }
+
+            self::$globalEvent = new $event_class;
+        }
+    }
+
     protected function start()
     {
-        $this->daemon();
+        // $this->daemon();
 
+        $this->initGlobalEvent();
+
+
+
+        var_dump(self::$globalEvent);
+exit;
         while (true) {
             sleep(1);
 
@@ -339,6 +364,27 @@ class Master
         } elseif (extension_loaded('proctitle') && function_exists('setproctitle')) {
             @setproctitle($title);
         }
+    }
+
+    protected function getLibevent()
+    {
+        if (extension_loaded('libevent')) {
+            return 'libevent';
+        }
+
+        exit('Don\'t have the extension libevent');
+    }
+
+    protected function getEventLoopName()
+    {
+        foreach ($this->eventLoops as $name) {
+            if (extension_loaded($name)) {
+                $this->eventLoopName = $name;
+                break;
+            }
+        }
+
+        return $this->eventLoopName;
     }
 
     protected function log($msg)
