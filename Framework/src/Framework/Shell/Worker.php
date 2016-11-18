@@ -20,7 +20,6 @@ class Worker
     public function run()
     {
 
-
         while (true) {
             sleep(5);
         }
