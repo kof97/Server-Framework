@@ -191,12 +191,6 @@ class Master
         // todo
     }
 
-    protected function checkInit()
-    {
-        is_dir('../run/') && exit('Not found the dir "run", Please run init.php first' . PHP_EOL);
-        is_dir('../log/') && exit('Not found the dir "log", Please run init.php first' . PHP_EOL);
-    }
-
     protected function initGlobalEvent()
     {
         if (!self::$globalEvent) {
@@ -347,6 +341,12 @@ class Master
             default:
                 break;
         }
+    }
+
+    protected function checkInit()
+    {
+        is_dir('../run/') && exit('Not found the dir "run", Please run init.php first' . PHP_EOL);
+        is_dir('../log/') && exit('Not found the dir "log", Please run init.php first' . PHP_EOL);
     }
 
     protected function checkSystem()
