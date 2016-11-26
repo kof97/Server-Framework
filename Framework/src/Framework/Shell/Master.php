@@ -193,8 +193,8 @@ class Master
 
     protected function checkInit()
     {
-        is_dir('../run/') && exit('Please run init.php first');
-        is_dir('../log/') && exit('Please run init.php first');
+        is_dir('../run/') && exit('Not found the dir "run", Please run init.php first' . PHP_EOL);
+        is_dir('../log/') && exit('Not found the dir "log", Please run init.php first' . PHP_EOL);
     }
 
     protected function initGlobalEvent()
@@ -214,7 +214,6 @@ class Master
     {
         $this->daemon();
 
-        $this->checkInit();
         $this->initGlobalEvent();
 
         while (true) {
@@ -313,6 +312,8 @@ class Master
 
     public function init($argc, $argv)
     {
+        $this->checkInit();
+
         if ($argc < 2) {
             $this->help();
         }
