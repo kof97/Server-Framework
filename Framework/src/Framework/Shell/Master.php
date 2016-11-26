@@ -191,6 +191,12 @@ class Master
         // todo
     }
 
+    protected function checkInit()
+    {
+        is_dir('../run/') && exit('Please run init.php first');
+        is_dir('../log/') && exit('Please run init.php first');
+    }
+
     protected function initGlobalEvent()
     {
         if (!self::$globalEvent) {
@@ -206,8 +212,9 @@ class Master
 
     protected function start()
     {
-        // $this->daemon();
+        $this->daemon();
 
+        $this->checkInit();
         $this->initGlobalEvent();
 
         while (true) {
