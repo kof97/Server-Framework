@@ -210,10 +210,6 @@ class Master
 
         $this->initGlobalEvent();
 
-
-
-        var_dump(self::$globalEvent);
-exit;
         while (true) {
             sleep(1);
 
