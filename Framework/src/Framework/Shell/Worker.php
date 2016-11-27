@@ -11,7 +11,6 @@ class Worker
 {
 
 
-
     public function __construct()
     {
 
