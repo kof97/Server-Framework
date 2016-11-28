@@ -63,6 +63,8 @@ class Cmd
     {
         $restful_root = $root . 'restful' . DIRECTORY_SEPARATOR;
 
+        is_dir($restful_root) || File::makeDir($restful_root);
+
         $resource_root = $restful_root . 'Resource';
         $model_root = $restful_root . 'Model';
 
