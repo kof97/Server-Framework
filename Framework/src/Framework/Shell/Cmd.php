@@ -32,7 +32,7 @@ class Cmd
         $root = isset($conf['base']['root']) ? $conf['base']['root'] : '';
 
         if (!is_dir($root)) {
-            throw new Exception("Please check your config, '($root)' is not exist");
+            exit("Please check your config, '($root)' is not exist");
         }
 
         $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
