@@ -10,7 +10,6 @@ namespace Framework\Shell;
 class Worker
 {
 
-
     public function __construct()
     {
 
