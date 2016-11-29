@@ -18,6 +18,8 @@ class Worker
     public function run()
     {
 
+    	var_dump(Master::$globalEvent);
+
         while (true) {
             sleep(5);
         }

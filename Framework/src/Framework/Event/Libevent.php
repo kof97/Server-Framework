@@ -118,7 +118,6 @@ class Libevent implements EventInterface
 
                 return true;
         }
-
     }
 
     /**

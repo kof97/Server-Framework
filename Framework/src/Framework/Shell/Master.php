@@ -92,6 +92,7 @@ class Master
     protected function run()
     {
         $this->loadConf();
+        $this->initGlobalEvent();
 
         while (true) {
             $this->checkWorkers();
@@ -207,8 +208,6 @@ class Master
     protected function start()
     {
         $this->daemon();
-
-        $this->initGlobalEvent();
 
         while (true) {
             sleep(1);
@@ -370,6 +369,9 @@ class Master
         }
     }
 
+    /**
+     * @deprecated
+     */
     protected function getLibevent()
     {
         if (extension_loaded('libevent')) {
