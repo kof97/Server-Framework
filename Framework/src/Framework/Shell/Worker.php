@@ -9,6 +9,7 @@ namespace Framework\Shell;
  */
 class Worker
 {
+	protected $socket = null;
 
     public function __construct()
     {
@@ -17,8 +18,6 @@ class Worker
 
     public function run()
     {
-
-    	var_dump(Master::$globalEvent);
 
         while (true) {
             sleep(5);

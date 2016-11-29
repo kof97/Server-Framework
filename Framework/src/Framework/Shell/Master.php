@@ -17,6 +17,10 @@ class Master
 
     const CONF_PATH = '../conf/server.ini';
 
+    public static $port = 8888;
+
+    public static $protocol = 'tcp';
+
     public static $globalEvent = null;
 
     protected $eventLoops = array(
