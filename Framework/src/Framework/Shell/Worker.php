@@ -11,9 +11,13 @@ class Worker
 {
 	protected $socket = null;
 
-    public function __construct()
-    {
+	protected $socketName = '';
 
+    public function __construct($socket_name = '')
+    {
+    	$info = parse_url($socket_name);
+
+    	var_dump($info);
     }
 
     public function run()
@@ -22,6 +26,24 @@ class Worker
         while (true) {
             sleep(5);
         }
+
+        $this->listen();
+    }
+
+    protected function listen()
+    {
+
+
+
+
+
+    	if (Master::$globalEvent) {
+    		if (Master::$protocol === 'udp') {
+    			Master::$globalEvent->add($this->socket, EventInterface::EV_READ, array($this, 'acceptUdpConnection'));
+    		} else {
+    			Master::$globalEvent->add($this->socket, EventInterface::EV_READ, array($this, 'acceptConnection'));
+    		}
+    	}
     }
 }
 

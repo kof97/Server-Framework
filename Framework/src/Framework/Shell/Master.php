@@ -17,11 +17,13 @@ class Master
 
     const CONF_PATH = '../conf/server.ini';
 
-    public static $port = 8888;
-
-    public static $protocol = 'tcp';
-
     public static $globalEvent = null;
+
+    protected $port = 8888;
+
+    protected $ip = '127.0.0.1';
+
+    protected $protocol = 'tcp';
 
     protected $eventLoops = array(
         'libevent',
@@ -172,7 +174,8 @@ class Master
     {
         $pid = pcntl_fork();
 
-        $worker = new Worker();
+        $socket_name = $this->protocol . '://' . $this->ip . '/' . $this->port;
+        $worker = new Worker($socket_name);
 
         if ($pid < 0) {
             // todo log
