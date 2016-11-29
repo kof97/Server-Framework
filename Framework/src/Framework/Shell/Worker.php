@@ -76,6 +76,11 @@ class Worker
             }
         }
     }
+
+    protected function acceptConnection()
+    {
+        
+    }
 }
 
 // end of script
