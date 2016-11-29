@@ -174,7 +174,7 @@ class Master
     {
         $pid = pcntl_fork();
 
-        $socket_name = $this->protocol . '://' . $this->ip . '/' . $this->port;
+        $socket_name = $this->protocol . '://' . $this->ip . ':' . $this->port;
         $worker = new Worker($socket_name);
 
         if ($pid < 0) {

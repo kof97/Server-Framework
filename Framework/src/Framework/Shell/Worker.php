@@ -9,15 +9,28 @@ namespace Framework\Shell;
  */
 class Worker
 {
-	protected $socket = null;
+    protected $socket = null;
 
-	protected $socketName = '';
+    protected $scheme = null;
+
+    protected $host = null;
+
+    protected $port = null;
+
+    protected $endpoint = null;
+
+    protected $socketName = '';
 
     public function __construct($socket_name = '')
     {
-    	$info = parse_url($socket_name);
+        $info = parse_url($socket_name);
 
-    	var_dump($info);
+        $this->socketName = $socket_name;
+
+        isset($info['scheme']) && $this->scheme = $info['scheme'];
+        isset($info['host']) && $this->host = $info['host'];
+        isset($info['port']) && $this->port = $info['port'];
+        isset($info['path']) && $this->endpoint = $info['path'];
     }
 
     public function run()
@@ -37,13 +50,13 @@ class Worker
 
 
 
-    	if (Master::$globalEvent) {
-    		if (Master::$protocol === 'udp') {
-    			Master::$globalEvent->add($this->socket, EventInterface::EV_READ, array($this, 'acceptUdpConnection'));
-    		} else {
-    			Master::$globalEvent->add($this->socket, EventInterface::EV_READ, array($this, 'acceptConnection'));
-    		}
-    	}
+        if (Master::$globalEvent) {
+            if (Master::$protocol === 'udp') {
+                Master::$globalEvent->add($this->socket, EventInterface::EV_READ, array($this, 'acceptUdpConnection'));
+            } else {
+                Master::$globalEvent->add($this->socket, EventInterface::EV_READ, array($this, 'acceptConnection'));
+            }
+        }
     }
 }
 
