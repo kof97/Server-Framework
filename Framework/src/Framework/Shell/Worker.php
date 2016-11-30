@@ -2,6 +2,8 @@
 
 namespace Framework\Shell;
 
+use Framework\Event\EventInterface;
+
 /**
  * Class Worker.
  *
@@ -43,9 +45,6 @@ class Worker
     public function run()
     {
 
-        while (true) {
-            sleep(5);
-        }
 
         $this->listen();
     }
@@ -75,11 +74,20 @@ class Worker
                 Master::$globalEvent->add($this->socket, EventInterface::EV_READ, array($this, 'acceptConnection'));
             }
         }
+
+        Master::$globalEvent->loop();
     }
 
-    protected function acceptConnection()
+    public function acceptConnection($socket)
     {
-        
+        $conn = @stream_socket_accept($socket, 0, $remote_address);
+
+        if (!$conn) {
+            exit('error conn');
+            return;
+        }
+
+        fwrite($conn, 'string');
     }
 }
 
