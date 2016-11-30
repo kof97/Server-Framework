@@ -33,9 +33,6 @@ class Master
 
     protected $eventLoops = array(
         'libevent',
-        'event',
-        'ev',
-        'select'
     );
 
     protected $eventLoopName;
