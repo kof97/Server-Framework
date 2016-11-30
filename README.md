@@ -10,13 +10,11 @@
 
 ---
 
-环境：`Unix`、`Libevent`、`>= PHP 5.4`
+环境：`Unix`、`Libevent`
+PHP 版本：`>= PHP 5.3`
 
 ---
 
-
-
----
 
 使用流程：
 
