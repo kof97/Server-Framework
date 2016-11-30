@@ -10,13 +10,7 @@
 
 ---
 
-环境：
-
-`Unix`
-
-`Libevent`
-
-`PHP 5.4`
+环境：`Unix`、`Libevent`、`>= PHP 5.4`
 
 
 
