@@ -21,11 +21,15 @@ class Master
 
     public static $socket = null;
 
-    protected $port = 8888;
+    protected $port = 8899;
 
     protected $ip = '127.0.0.1';
 
     protected $protocol = 'tcp';
+
+    protected $socketName = '';
+
+    protected $context = null;
 
     protected $eventLoops = array(
         'libevent',
@@ -63,6 +67,13 @@ class Master
     {
         $this->checkSystem();
         $this->signal();
+
+        $this->socketName = $this->protocol . '://' . $this->ip . ':' . $this->port;
+
+        if ($this->socketName !== '') {
+            $context_option['socket']['backlog'] = 1024;
+            $this->context = stream_context_create($context_option);
+        }
 
         $this->masterPidFile = self::RUN_TIME . self::SERVER_NAME . '.pid';
     }
@@ -102,18 +113,21 @@ class Master
         $this->loadConf();
         $this->initGlobalEvent();
 
+        if (self::$socket === null) {
+            $this->initSocket($this->socketName, $this->context);
+        }
+
         while (true) {
             $this->checkWorkers();
 
             pcntl_signal_dispatch();
 
-
-            sleep(2);
-
             if (Signal::get() == SIGHUP) {
                 Signal::reset();
                 break;
             }
+
+            sleep(2);
         }
     }
 
@@ -176,8 +190,7 @@ class Master
     {
         $pid = pcntl_fork();
 
-        $socket_name = $this->protocol . '://' . $this->ip . ':' . $this->port;
-        $worker = new Worker($socket_name);
+        $worker = new Worker($this->socketName);
 
         if ($pid < 0) {
             // todo log
@@ -214,19 +227,16 @@ class Master
         }
     }
 
-    public static function initSocket($socket_name = '', $context = array())
+    protected function initSocket($socket_name = '', $context = array())
     {
-        $info = parse_url($socket_name);
-        $scheme = $info['scheme'];
-
-        $flags  = $scheme === 'udp' ? STREAM_SERVER_BIND : STREAM_SERVER_BIND | STREAM_SERVER_LISTEN;
+        $flags  = $this->protocol === 'udp' ? STREAM_SERVER_BIND : STREAM_SERVER_BIND | STREAM_SERVER_LISTEN;
         $errno  = 0;
         $errmsg = '';
 
         self::$socket = stream_socket_server($socket_name, $errno, $errmsg, $flags, $context);
 
         // Try to open keepalive for tcp and disable Nagle algorithm.
-        if (function_exists('socket_import_stream') && $scheme === 'tcp') {
+        if (function_exists('socket_import_stream') && $this->protocol === 'tcp') {
             $socket = socket_import_stream(self::$socket);
             @socket_set_option($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
             @socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
