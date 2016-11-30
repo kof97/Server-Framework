@@ -23,7 +23,7 @@ class Master
 
     protected $port = 8899;
 
-    protected $ip = '125.219.42.4';
+    protected $ip = '127.0.0.1';
 
     protected $protocol = 'tcp';
 
