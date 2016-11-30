@@ -28,6 +28,7 @@
 
 查看当前服务状态： `php run.php status`
 
+[](https://raw.githubusercontent.com/kof97/Server-Framework/master/images/status.png)
 
 重启服务： `php run.php restart`
 
