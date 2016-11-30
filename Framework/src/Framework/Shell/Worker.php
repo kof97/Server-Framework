@@ -11,8 +11,6 @@ use Framework\Event\EventInterface;
  */
 class Worker
 {
-    protected $socket = null;
-
     protected $scheme = null;
 
     protected $host = null;
@@ -52,26 +50,15 @@ class Worker
     protected function listen()
     {
 
-        $flags  = $this->scheme === 'udp' ? STREAM_SERVER_BIND : STREAM_SERVER_BIND | STREAM_SERVER_LISTEN;
-        $errno  = 0;
-        $errmsg = '';
-
-        $this->socket = stream_socket_server($this->socketName, $errno, $errmsg, $flags, $this->context);
-
-        // Try to open keepalive for tcp and disable Nagle algorithm.
-        if (function_exists('socket_import_stream') && $this->scheme === 'tcp') {
-            $socket = socket_import_stream($this->socket);
-            @socket_set_option($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
-            @socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
+        if (Master::$socket === null) {
+            Master::initSocket($this->socketName, $this->context);
         }
-
-        stream_set_blocking($this->socket, 0);
 
         if (Master::$globalEvent) {
             if ($this->scheme === 'udp') {
-                Master::$globalEvent->add($this->socket, EventInterface::EV_READ, array($this, 'acceptUdpConnection'));
+                Master::$globalEvent->add(Master::$socket, EventInterface::EV_READ, array($this, 'acceptUdpConnection'));
             } else {
-                Master::$globalEvent->add($this->socket, EventInterface::EV_READ, array($this, 'acceptConnection'));
+                Master::$globalEvent->add(Master::$socket, EventInterface::EV_READ, array($this, 'acceptConnection'));
             }
         }
 
