@@ -10,4 +10,25 @@
 
 ---
 
+
+
+使用流程：
+
+进入 `bin` 目录下
+
+初始化： `php init.php`
+
+启动服务： `php run.php start`
+
+查看当前服务状态： `php run.php status`
+
+
+重启服务： `php run.php restart`
+
+平滑重启： `php run.php reload`
+
+停止服务： `php run.php stop`
+
+帮助： `php run.php help`
+
 Developing . . . .
