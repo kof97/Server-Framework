@@ -2,7 +2,7 @@
 
 namespace Framework\Connection;
 
-use Framework\Events\EventInterface;
+use Framework\Event\EventInterface;
 use Framework\Master;
 use Exception;
 
@@ -90,9 +90,9 @@ class TcpConnection extends ConnectionInterface
 
     /**
      * Application layer protocol.
-     * The format is like this Workerman\\Protocols\\Http.
+     * The format is like this Framework\\Protocol\\Http.
      *
-     * @var \Workerman\Protocols\ProtocolInterface
+     * @var \Framework\Protocol\ProtocolInterface
      */
     public $protocol = null;
 
@@ -211,7 +211,7 @@ class TcpConnection extends ConnectionInterface
         if (function_exists('stream_set_read_buffer')) {
             stream_set_read_buffer($this->_socket, 0);
         }
-        Worker::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
+        Master::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
         $this->maxSendBufferSize = self::$defaultMaxSendBufferSize;
         $this->_remoteAddress    = $remote_address;
     }
@@ -257,12 +257,12 @@ class TcpConnection extends ConnectionInterface
                     self::$statistics['send_fail']++;
                     if ($this->onError) {
                         try {
-                            call_user_func($this->onError, $this, WORKERMAN_SEND_FAIL, 'client closed');
+                            call_user_func($this->onError, $this, 2, 'client closed');
                         } catch (\Exception $e) {
-                            Worker::log($e);
+                            Master::log($e);
                             exit(250);
                         } catch (\Error $e) {
-                            Worker::log($e);
+                            Master::log($e);
                             exit(250);
                         }
                     }
@@ -271,7 +271,7 @@ class TcpConnection extends ConnectionInterface
                 }
                 $this->_sendBuffer = $send_buffer;
             }
-            Worker::$globalEvent->add($this->_socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
+            Master::$globalEvent->add($this->_socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
             // Check if the send buffer is full.
             $this->checkBufferIsFull();
             return null;
@@ -281,12 +281,12 @@ class TcpConnection extends ConnectionInterface
                 self::$statistics['send_fail']++;
                 if ($this->onError) {
                     try {
-                        call_user_func($this->onError, $this, WORKERMAN_SEND_FAIL, 'send buffer full and drop package');
+                        call_user_func($this->onError, $this, 2, 'send buffer full and drop package');
                     } catch (\Exception $e) {
-                        Worker::log($e);
+                        Master::log($e);
                         exit(250);
                     } catch (\Error $e) {
-                        Worker::log($e);
+                        Master::log($e);
                         exit(250);
                     }
                 }
@@ -332,7 +332,7 @@ class TcpConnection extends ConnectionInterface
      */
     public function pauseRecv()
     {
-        Worker::$globalEvent->del($this->_socket, EventInterface::EV_READ);
+        Master::$globalEvent->del($this->_socket, EventInterface::EV_READ);
         $this->_isPaused = true;
     }
 
@@ -344,7 +344,7 @@ class TcpConnection extends ConnectionInterface
     public function resumeRecv()
     {
         if ($this->_isPaused === true) {
-            Worker::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
+            Master::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
             $this->_isPaused = false;
             $this->baseRead($this->_socket, false);
         }
@@ -421,10 +421,10 @@ class TcpConnection extends ConnectionInterface
                     // Decode request buffer before Emitting onMessage callback.
                     call_user_func($this->onMessage, $this, $parser::decode($one_request_buffer, $this));
                 } catch (\Exception $e) {
-                    Worker::log($e);
+                    Master::log($e);
                     exit(250);
                 } catch (\Error $e) {
-                    Worker::log($e);
+                    Master::log($e);
                     exit(250);
                 }
             }
@@ -444,10 +444,10 @@ class TcpConnection extends ConnectionInterface
         try {
             call_user_func($this->onMessage, $this, $this->_recvBuffer);
         } catch (\Exception $e) {
-            Worker::log($e);
+            Master::log($e);
             exit(250);
         } catch (\Error $e) {
-            Worker::log($e);
+            Master::log($e);
             exit(250);
         }
         // Clean receive buffer.
@@ -463,17 +463,17 @@ class TcpConnection extends ConnectionInterface
     {
         $len = @fwrite($this->_socket, $this->_sendBuffer);
         if ($len === strlen($this->_sendBuffer)) {
-            Worker::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
+            Master::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
             $this->_sendBuffer = '';
             // Try to emit onBufferDrain callback when the send buffer becomes empty. 
             if ($this->onBufferDrain) {
                 try {
                     call_user_func($this->onBufferDrain, $this);
                 } catch (\Exception $e) {
-                    Worker::log($e);
+                    Master::log($e);
                     exit(250);
                 } catch (\Error $e) {
-                    Worker::log($e);
+                    Master::log($e);
                     exit(250);
                 }
             }
@@ -568,10 +568,10 @@ class TcpConnection extends ConnectionInterface
                 try {
                     call_user_func($this->onBufferFull, $this);
                 } catch (\Exception $e) {
-                    Worker::log($e);
+                    Master::log($e);
                     exit(250);
                 } catch (\Error $e) {
-                    Worker::log($e);
+                    Master::log($e);
                     exit(250);
                 }
             }
@@ -590,8 +590,8 @@ class TcpConnection extends ConnectionInterface
             return;
         }
         // Remove event listener.
-        Worker::$globalEvent->del($this->_socket, EventInterface::EV_READ);
-        Worker::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
+        Master::$globalEvent->del($this->_socket, EventInterface::EV_READ);
+        Master::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
         // Close socket.
         @fclose($this->_socket);
         // Remove from worker->connections.
@@ -604,10 +604,10 @@ class TcpConnection extends ConnectionInterface
             try {
                 call_user_func($this->onClose, $this);
             } catch (\Exception $e) {
-                Worker::log($e);
+                Master::log($e);
                 exit(250);
             } catch (\Error $e) {
-                Worker::log($e);
+                Master::log($e);
                 exit(250);
             }
         }
@@ -616,10 +616,10 @@ class TcpConnection extends ConnectionInterface
             try {
                 call_user_func(array($this->protocol, 'onClose'), $this);
             } catch (\Exception $e) {
-                Worker::log($e);
+                Master::log($e);
                 exit(250);
             } catch (\Error $e) {
-                Worker::log($e);
+                Master::log($e);
                 exit(250);
             }
         }
@@ -639,3 +639,5 @@ class TcpConnection extends ConnectionInterface
         self::$statistics['connection_count']--;
     }
 }
+
+// end of script

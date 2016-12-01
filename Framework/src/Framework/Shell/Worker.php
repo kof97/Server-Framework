@@ -11,6 +11,21 @@ use Framework\Event\EventInterface;
  */
 class Worker
 {
+    /**
+     * @var array The connections.
+     */
+    public $connections = array();
+
+    public $onMessage = null;
+
+    public $onClose = null;
+
+    public $onError = null;
+
+    public $onBufferFull = null;
+
+    public $onBufferDrain = null;
+
     protected $scheme = null;
 
     protected $host = null;
@@ -61,13 +76,21 @@ class Worker
             return;
         }
 
-        
+        $connection = new TcpConnection($conn, $remote_address);
+        $this->connections[$connection->id] = $connection;
 
-        $msg = 'Receive from ';
+        $connection->worker = $this;
+        $connection->protocol = $scheme;
 
-        var_dump($this->getRequestHeaders());
+        $this->onMessage = function ($conn, $data) {
+            $conn->send('hello');
+        };
 
-        fwrite($conn, 'From ' . $this->host . ': ' . PHP_EOL);
+        $connection->onMessage = $this->onMessage;
+        $connection->onClose = $this->onClose;
+        $connection->onError = $this->onError;
+        $connection->onBufferFull = $this->onBufferFull;
+        $connection->onBufferDrain = $this->onBufferDrain;
     }
 
     protected function getRequestHeaders()
