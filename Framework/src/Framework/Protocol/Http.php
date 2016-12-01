@@ -3,7 +3,7 @@
 namespace Framework\Protocol;
 
 use Framework\Connection\TcpConnection;
-use Framework\Shell\Master;
+// use Framework\Shell\Master;
 use \Exception;
 
 /**
