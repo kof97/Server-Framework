@@ -3,6 +3,7 @@
 namespace Framework\Shell;
 
 use Framework\Event\EventInterface;
+use Framework\Connection\TcpConnection;
 
 /**
  * Class Worker.
@@ -80,7 +81,7 @@ class Worker
         $this->connections[$connection->id] = $connection;
 
         $connection->worker = $this;
-        $connection->protocol = $scheme;
+        $connection->protocol = $this->scheme === 'tcp' ? 'Framework\Protocol\Http' : '';
 
         $this->onMessage = function ($conn, $data) {
             $conn->send('hello');
@@ -107,9 +108,9 @@ class Worker
         }
 
         if (isset($_SERVER['PHP_AUTH_DIGEST'])) {
-            $header['AUTHORIZATION'] = $_SERVER['PHP_AUTH_DIGEST']);
+            $header['AUTHORIZATION'] = $_SERVER['PHP_AUTH_DIGEST'];
         } elseif (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-            $header['AUTHORIZATION'] = base64_encode($_SERVER['PHP_AUTH_USER'] . ':' . $_SERVER['PHP_AUTH_PW']));
+            $header['AUTHORIZATION'] = base64_encode($_SERVER['PHP_AUTH_USER'] . ':' . $_SERVER['PHP_AUTH_PW']);
         }
 
         if (isset($_SERVER['CONTENT_LENGTH'])) {

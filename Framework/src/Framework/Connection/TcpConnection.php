@@ -3,7 +3,7 @@
 namespace Framework\Connection;
 
 use Framework\Event\EventInterface;
-use Framework\Master;
+use Framework\Shell\Master;
 use Exception;
 
 /**
