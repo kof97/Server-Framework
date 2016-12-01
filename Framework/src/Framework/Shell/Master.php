@@ -31,6 +31,17 @@ class Master
 
     protected $context = null;
 
+    protected $protocolMap = array(
+        'http'  => 'tcp',
+        'tcp'   => 'tcp',
+        'udp'   => 'udp',
+        'ssl'   => 'tcp',
+        'sslv2' => 'tcp',
+        'sslv3' => 'tcp',
+        'tls'   => 'tcp',
+        'unix'  => 'unix'
+    );
+
     protected $eventLoops = array(
         'libevent',
     );

@@ -61,6 +61,8 @@ class Worker
             return;
         }
 
+        
+
         $msg = 'Receive from ';
 
         var_dump($this->getRequestHeaders());
