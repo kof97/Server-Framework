@@ -4,6 +4,7 @@ namespace Framework\Protocol;
 
 use Framework\Connection\TcpConnection;
 use Framework\Shell\Master;
+use \Exception;
 
 /**
  * http protocol
@@ -356,7 +357,7 @@ class Http
      * End, like call exit in php-fpm.
      *
      * @param string $msg
-     * @throws \Exception
+     * @throws Exception
      */
     public static function end($msg = '')
     {
@@ -368,7 +369,7 @@ class Http
             echo $msg;
         }
 
-        throw new \Exception('jump_exit');
+        throw new Exception('jump_exit');
     }
 
     /**
