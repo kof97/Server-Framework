@@ -1,20 +1,9 @@
 <?php
-/**
- * This file is part of workerman.
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the MIT-LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @author    walkor<walkor@workerman.net>
- * @copyright walkor<walkor@workerman.net>
- * @link      http://www.workerman.net/
- * @license   http://www.opensource.org/licenses/mit-license.php MIT License
- */
-namespace Workerman\Protocols;
 
-use Workerman\Connection\TcpConnection;
-use Workerman\Worker;
+namespace Framework\Protocol;
+
+use Framework\Connection\TcpConnection;
+use Framework\Shell\Master;
 
 /**
  * http protocol
@@ -78,7 +67,7 @@ class Http
             'REQUEST_METHOD'       => '',
             'REQUEST_URI'          => '',
             'SERVER_PROTOCOL'      => '',
-            'SERVER_SOFTWARE'      => 'workerman/'.Worker::VERSION,
+            'SERVER_SOFTWARE'      => 'ServerFramework/1.0',
             'SERVER_NAME'          => '',
             'HTTP_HOST'            => '',
             'HTTP_USER_AGENT'      => '',
@@ -201,7 +190,7 @@ class Http
         }
 
         // header
-        $header .= "Server: workerman/" . Worker::VERSION . "\r\nContent-Length: " . strlen($content) . "\r\n\r\n";
+        $header .= "Server: ServerFramework/1.0" . "\r\nContent-Length: " . strlen($content) . "\r\n\r\n";
 
         // save session
         self::sessionWriteClose();
@@ -321,13 +310,13 @@ class Http
             HttpCache::$instance->sessionFile = $file_name;
             $session_id                       = substr(basename($file_name), strlen('ses'));
             return self::setcookie(
-                HttpCache::$sessionName
-                , $session_id
-                , ini_get('session.cookie_lifetime')
-                , ini_get('session.cookie_path')
-                , ini_get('session.cookie_domain')
-                , ini_get('session.cookie_secure')
-                , ini_get('session.cookie_httponly')
+                HttpCache::$sessionName,
+                $session_id,
+                ini_get('session.cookie_lifetime'),
+                ini_get('session.cookie_path'),
+                ini_get('session.cookie_domain'),
+                ini_get('session.cookie_secure'),
+                ini_get('session.cookie_httponly')
             );
         }
         if (!HttpCache::$instance->sessionFile) {
@@ -359,6 +348,7 @@ class Http
                 return file_put_contents(HttpCache::$instance->sessionFile, $session_str);
             }
         }
+
         return empty($_SESSION);
     }
 
@@ -373,9 +363,11 @@ class Http
         if (PHP_SAPI != 'cli') {
             exit($msg);
         }
+
         if ($msg) {
             echo $msg;
         }
+
         throw new \Exception('jump_exit');
     }
 
