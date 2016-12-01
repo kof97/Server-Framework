@@ -441,8 +441,10 @@ class Master
         return $this->eventLoopName;
     }
 
-    protected function log($msg)
+    protected function log($msg = '')
     {
+        return true;
+
         $msg = $msg . "\n";
         if (!self::$daemonize) {
             echo $msg;
