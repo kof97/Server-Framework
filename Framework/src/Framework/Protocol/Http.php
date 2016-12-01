@@ -395,6 +395,7 @@ class Http
         if ($boundary_data_array[0] === '') {
             unset($boundary_data_array[0]);
         }
+
         foreach ($boundary_data_array as $boundary_data_buffer) {
             list($boundary_header_buffer, $boundary_value) = explode("\r\n\r\n", $boundary_data_buffer, 2);
             // Remove \r\n from the end of buffer.
@@ -496,6 +497,9 @@ class HttpCache
         if (!self::$sessionPath) {
             self::$sessionPath = sys_get_temp_dir();
         }
+
         @\session_start();
     }
 }
+
+// end of script
