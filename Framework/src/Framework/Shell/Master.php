@@ -3,6 +3,7 @@
 namespace Framework\Shell;
 
 use Framework\Shell\Signal;
+use Framework\Event\EventInterface;
 
 /**
  * Class Master.
@@ -264,8 +265,16 @@ class Master
         }
     }
 
+    protected function closeSocket()
+    {
+        self::$globalEvent->del(self::$socket, EventInterface::EV_READ);
+        @fclose(self::$socket);
+    }
+
     protected function stop()
     {
+        $this->closeSocket();
+
         exec("ps aux | grep run.php | awk '{print $2}'", $output);
         $total = 0;
 
