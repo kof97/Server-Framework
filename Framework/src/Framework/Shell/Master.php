@@ -279,7 +279,7 @@ class Master
         self::$globalEvent->del(self::$socket, EventInterface::EV_READ);
         @fclose(self::$socket);
 
-        echo 'The socket is closed' . PHP_EOL;
+        echo str_pad('* Close the socket', 30, ' ') . "\033[32m [OK] \033[0m" . PHP_EOL . PHP_EOL;
     }
 
     protected function stop()
