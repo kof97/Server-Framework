@@ -90,7 +90,11 @@ class Master
     protected function signal()
     {
         pcntl_signal(SIGHUP, function ($signo) {
-            echo 'The server will be reloaded after 1s' . PHP_EOL;
+            echo 'The server is reloaded' . PHP_EOL;
+            Signal::set($signo);
+        });
+
+        pcntl_signal(SIGINT, function ($signo) {
             Signal::set($signo);
         });
     }
@@ -133,6 +137,11 @@ class Master
 
             if (Signal::get() == SIGHUP) {
                 Signal::reset();
+                break;
+            }
+
+            if (Signal::get() == SIGINT) {
+                $this->closeSocket();
                 break;
             }
 
@@ -269,6 +278,8 @@ class Master
     {
         self::$globalEvent->del(self::$socket, EventInterface::EV_READ);
         @fclose(self::$socket);
+
+        echo 'The socket is closed' . PHP_EOL;
     }
 
     protected function stop()
