@@ -92,11 +92,11 @@ class Master
         pcntl_signal(SIGHUP, function ($signo) {
             echo 'The server is reloaded' . PHP_EOL;
             Signal::set($signo);
-        });
+        }, false);
 
         pcntl_signal(SIGINT, function ($signo) {
             Signal::set($signo);
-        });
+        }, false);
     }
 
     protected function daemon()
@@ -284,7 +284,13 @@ class Master
 
     protected function stop()
     {
-        $this->closeSocket();
+        if (!is_file($this->masterPidFile)) {
+            exit('Not found the server ! !' . PHP_EOL);
+        }
+
+        $master_pid = file_get_contents($this->masterPidFile);
+
+        posix_kill($master_pid, SIGINT);
 
         exec("ps aux | grep run.php | awk '{print $2}'", $output);
         $total = 0;
@@ -306,17 +312,11 @@ class Master
             echo PHP_EOL . 'Total kill ' . $total . ' worker process' . PHP_EOL . PHP_EOL;
         }
 
-        if (is_file($this->masterPidFile)) {
-            $pid = file_get_contents($this->masterPidFile);
-            unlink($this->masterPidFile);
+        echo str_pad('* Kill the master process', 30, ' ') . "\033[32m [success] \033[0m" . PHP_EOL . PHP_EOL;
+        echo '* Done' . PHP_EOL . PHP_EOL;
 
-            echo str_pad('* Kill the master process', 30, ' ') . "\033[32m [success] \033[0m" . PHP_EOL . PHP_EOL;
-            echo '* Done' . PHP_EOL . PHP_EOL;
-
-            posix_kill($pid, 9);
-        } else {
-            echo 'Not found the server ! !' . PHP_EOL;
-        }
+        unlink($this->masterPidFile);
+        posix_kill($master_pid, 9);
     }
 
     protected function reload()
