@@ -27,6 +27,8 @@ class Worker
 
     public $onBufferDrain = null;
 
+    public $event = null;
+
     protected $scheme = null;
 
     protected $host = null;
@@ -58,15 +60,15 @@ class Worker
 
     protected function listen()
     {
-        if (Master::$globalEvent) {
+        if ($this->event) {
             if ($this->scheme === 'udp') {
-                Master::$globalEvent->add(Master::$socket, EventInterface::EV_READ, array($this, 'acceptUdpConnection'));
+                $this->event->add(Master::$socket, EventInterface::EV_READ, array($this, 'acceptUdpConnection'));
             } else {
-                Master::$globalEvent->add(Master::$socket, EventInterface::EV_READ, array($this, 'acceptConnection'));
+                $this->event->add(Master::$socket, EventInterface::EV_READ, array($this, 'acceptConnection'));
             }
         }
 
-        Master::$globalEvent->loop();
+        $this->event->loop();
     }
 
     public function acceptConnection($socket)
@@ -77,10 +79,10 @@ class Worker
             return;
         }
 
-        $connection = new TcpConnection($conn, $remote_address);
+        $connection = new TcpConnection($conn, $remote_address, $this);
         $this->connections[$connection->id] = $connection;
 
-        $connection->worker = $this;
+        // $connection->worker = $this;
         $connection->protocol = $this->scheme === 'tcp' ? 'Framework\Protocol\Http' : '';
 
         $this->onMessage = function ($conn, $data) {
@@ -122,6 +124,13 @@ class Worker
         }
 
         return $headers;
+    }
+
+    public function initEventClass($class_name)
+    {
+        if (!$this->event) {
+            $this->event = new $class_name;
+        }
     }
 }
 

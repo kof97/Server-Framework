@@ -18,8 +18,6 @@ class Master
 
     const CONF_PATH = '../conf/server.ini';
 
-    public static $globalEvent = null;
-
     public static $socket = null;
 
     protected $port = 8899;
@@ -47,7 +45,7 @@ class Master
         'libevent',
     );
 
-    protected $eventLoopName;
+    protected $eventClassName = null;
 
     /**
      * @var worker num
@@ -124,7 +122,7 @@ class Master
     protected function run()
     {
         $this->loadConf();
-        $this->initGlobalEvent();
+        $this->prepareEventClass();
 
         if (self::$socket === null) {
             $this->initSocket($this->socketName, $this->context);
@@ -209,6 +207,7 @@ class Master
         $pid = pcntl_fork();
 
         $worker = new Worker($this->socketName);
+        $worker->initEventClass($this->eventClassName);
 
         if ($pid < 0) {
             // todo log
@@ -232,16 +231,16 @@ class Master
         // todo
     }
 
-    protected function initGlobalEvent()
+    protected function prepareEventClass()
     {
-        if (!self::$globalEvent) {
+        if (!$this->eventClassName) {
             $event_class = '\\Framework\\Event\\' . ucfirst($this->getEventLoopName());
 
             if (!$this->getEventLoopName()) {
                 exit('no extension');
             }
 
-            self::$globalEvent = new $event_class;
+            $this->eventClassName = $event_class;
         }
     }
 
@@ -276,10 +275,10 @@ class Master
 
     protected function closeSocket()
     {
-        self::$globalEvent->del(self::$socket, EventInterface::EV_READ);
+        // $this->eventClassName->del(self::$socket, EventInterface::EV_READ);
         @fclose(self::$socket);
 
-        echo str_pad('* Close the socket', 30, ' ') . "\033[32m [OK] \033[0m" . PHP_EOL . PHP_EOL;
+        echo str_pad('* Close the socket', 25, ' ') . "\033[32m [OK] \033[0m" . PHP_EOL . PHP_EOL;
     }
 
     protected function stop()
@@ -453,12 +452,12 @@ class Master
     {
         foreach ($this->eventLoops as $name) {
             if (extension_loaded($name)) {
-                $this->eventLoopName = $name;
+                $event_loop_name = $name;
                 break;
             }
         }
 
-        return $this->eventLoopName;
+        return $event_loop_name;
     }
 
     protected function log($msg = '')

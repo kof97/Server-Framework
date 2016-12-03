@@ -4,6 +4,7 @@ namespace Framework\Connection;
 
 use Framework\Event\EventInterface;
 use Framework\Shell\Master;
+use Framework\Shell\Worker;
 use Exception;
 
 /**
@@ -201,17 +202,20 @@ class TcpConnection extends ConnectionInterface
      * @param resource $socket
      * @param string   $remote_address
      */
-    public function __construct($socket, $remote_address = '')
+    public function __construct($socket, $remote_address = '', $worker = null)
     {
         self::$statistics['connection_count']++;
         $this->id      = $this->_id = self::$_idRecorder++;
         $this->_socket = $socket;
+
+        $this->worker = $worker;
+
         stream_set_blocking($this->_socket, 0);
         // Compatible with hhvm
         if (function_exists('stream_set_read_buffer')) {
             stream_set_read_buffer($this->_socket, 0);
         }
-        Master::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
+        $this->worker->event->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
         $this->maxSendBufferSize = self::$defaultMaxSendBufferSize;
         $this->_remoteAddress    = $remote_address;
     }
@@ -271,7 +275,7 @@ class TcpConnection extends ConnectionInterface
                 }
                 $this->_sendBuffer = $send_buffer;
             }
-            Master::$globalEvent->add($this->_socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
+            $this->worker->event->add($this->_socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
             // Check if the send buffer is full.
             $this->checkBufferIsFull();
             return null;
@@ -332,7 +336,7 @@ class TcpConnection extends ConnectionInterface
      */
     public function pauseRecv()
     {
-        Master::$globalEvent->del($this->_socket, EventInterface::EV_READ);
+        $this->worker->event->del($this->_socket, EventInterface::EV_READ);
         $this->_isPaused = true;
     }
 
@@ -344,7 +348,7 @@ class TcpConnection extends ConnectionInterface
     public function resumeRecv()
     {
         if ($this->_isPaused === true) {
-            Master::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
+            $this->worker->event->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
             $this->_isPaused = false;
             $this->baseRead($this->_socket, false);
         }
@@ -463,7 +467,7 @@ class TcpConnection extends ConnectionInterface
     {
         $len = @fwrite($this->_socket, $this->_sendBuffer);
         if ($len === strlen($this->_sendBuffer)) {
-            Master::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
+            $this->worker->event->del($this->_socket, EventInterface::EV_WRITE);
             $this->_sendBuffer = '';
             // Try to emit onBufferDrain callback when the send buffer becomes empty. 
             if ($this->onBufferDrain) {
@@ -590,8 +594,8 @@ class TcpConnection extends ConnectionInterface
             return;
         }
         // Remove event listener.
-        Master::$globalEvent->del($this->_socket, EventInterface::EV_READ);
-        Master::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
+        $this->worker->event->del($this->_socket, EventInterface::EV_READ);
+        $this->worker->event->del($this->_socket, EventInterface::EV_WRITE);
         // Close socket.
         @fclose($this->_socket);
         // Remove from worker->connections.
