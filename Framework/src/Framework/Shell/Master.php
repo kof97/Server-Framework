@@ -168,32 +168,18 @@ class Master
 
     protected function checkWorkers()
     {
-        $unset_list = array();
-        foreach ($this->pidFileList as $pid => $file) {
-            if (!is_file($file)) {
-                array_push($unset_list, $pid);
-            }
-        }
-
-        foreach ($unset_list as $pid) {
-            if (isset($this->workers[$pid])) {
-                unset($this->workers[$pid]);
-            }
-
-            if (isset($this->pidFileList[$pid])) {
-                unset($this->pidFileList[$pid]);
-            }
-        }
-
+        // clear abnormal worker
         exec("ps aux | grep run.php | awk '{print $2}'", $output);
         if ($handle = opendir(self::RUN_TIME)) {
             while (false !== ($file = readdir($handle))) {
                 if ($file != "." && $file != ".." && strpos($file, self::SERVER_NAME) === false) {
                     $point_pid = substr($file, strpos($file, '_') + 1);
                     $pid = substr($point_pid, 0, strlen($point_pid) - 4);
-                    
-                    if (in_array($pid, $output)) {
-                        var_dump($pid);
+
+                    if (!in_array($pid, $output)) {
+                        isset($this->workers[$pid]) && unset($this->workers[$pid]);
+                        isset($this->pidFileList[$pid]) && unset($this->pidFileList[$pid]);
+                        @unlink(self::RUN_TIME . 'Worker_' . $pid . '.pid');
                     }
                 }
             }
