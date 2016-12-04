@@ -78,7 +78,7 @@ class Worker
         if (!$conn) {
             return;
         }
-
+exit;
         $connection = new TcpConnection($conn, $remote_address, $this);
         $this->connections[$connection->id] = $connection;
 

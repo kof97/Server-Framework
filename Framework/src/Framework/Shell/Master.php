@@ -70,6 +70,9 @@ class Master
 
     protected $daemonize = false;
 
+    /**
+     * Init socket, check system and install signal.
+     */
     public function __construct()
     {
         $this->checkSystem();
@@ -182,6 +185,22 @@ class Master
             }
         }
 
+        exec("ps aux | grep run.php | awk '{print $2}'", $output);
+        if ($handle = opendir(self::RUN_TIME)) {
+            while (false !== ($file = readdir($handle))) {
+                if ($file != "." && $file != ".." && strpos($file, self::SERVER_NAME) === false) {
+                    $point_pid = substr($file, strpos($file, '_') + 1);
+                    $pid = substr($point_pid, 0, strlen($point_pid) - 4);
+                    
+                    if (in_array($pid, $output)) {
+                        var_dump($pid);
+                    }
+                }
+            }
+
+            closedir($handle);
+        }
+
         while (count($this->workers) < $this->count) {
             $this->forkWorker();
         }
@@ -204,10 +223,10 @@ class Master
 
     protected function forkWorker()
     {
-        $pid = pcntl_fork();
-
         $worker = new Worker($this->socketName);
         $worker->initEventClass($this->eventClassName);
+
+        $pid = pcntl_fork();
 
         if ($pid < 0) {
             // todo log
