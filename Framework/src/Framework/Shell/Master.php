@@ -177,8 +177,13 @@ class Master
                     $pid = substr($point_pid, 0, strlen($point_pid) - 4);
 
                     if (!in_array($pid, $output)) {
-                        isset($this->workers[$pid]) && unset($this->workers[$pid]);
-                        isset($this->pidFileList[$pid]) && unset($this->pidFileList[$pid]);
+                        if (isset($this->workers[$pid])) {
+                            unset($this->workers[$pid]);
+                        }
+                        if (isset($this->pidFileList[$pid])) {
+                            unset($this->pidFileList[$pid]);
+                        }
+
                         @unlink(self::RUN_TIME . 'Worker_' . $pid . '.pid');
                     }
                 }
