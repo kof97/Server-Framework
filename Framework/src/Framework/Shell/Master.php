@@ -168,7 +168,7 @@ class Master
 
     protected function checkWorkers()
     {
-        // clear abnormal worker
+        // clear abnormal worker, clear file and log
         exec("ps aux | grep run.php | awk '{print $2}'", $output);
         if ($handle = opendir(self::RUN_TIME)) {
             while (false !== ($file = readdir($handle))) {
@@ -432,7 +432,7 @@ class Master
         }
 
         if (!function_exists('pcntl_fork')) {
-            exit('Your system can\'t support portable operating system interface of Unix ! !' . PHP_EOL);
+            exit('Your system can\'t support pcntl, please install pcntl extension' . PHP_EOL);
         }
     }
 
