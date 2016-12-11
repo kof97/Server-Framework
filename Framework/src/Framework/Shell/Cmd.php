@@ -32,7 +32,7 @@ class Cmd
         $root = isset($conf['base']['root']) ? $conf['base']['root'] : '';
 
         if (!is_dir($root)) {
-            throw new Exception("Please check your config, '($root)' is not exist");
+            exit("Please check your config, '($root)' is not exist" . PHP_EOL);
         }
 
         $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
@@ -63,11 +63,17 @@ class Cmd
     {
         $restful_root = $root . 'restful' . DIRECTORY_SEPARATOR;
 
+        is_dir($restful_root) || File::makeDir($restful_root);
+
         $resource_root = $restful_root . 'Resource';
         $model_root = $restful_root . 'Model';
 
         is_dir($resource_root) || File::makeDir($resource_root);
         is_dir($model_root) || File::makeDir($model_root);
+
+        chmod($restful_root, 0644);
+        chmod($resource_root, 0644);
+        chmod($model_root, 0644);
 
         echo PHP_EOL . 'Init restful OK' . PHP_EOL;
     }

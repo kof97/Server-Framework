@@ -2,6 +2,7 @@
 
 namespace Framework\Coroutine;
 
+use Framework\Coroutine\IoPoll;
 use \SplQueue;
 use \Generator;
 use \Exception;
@@ -30,15 +31,9 @@ class Scheduler
     protected $taskQueue;
 
     /**
-     * @var array IO queue that waiting to read [resourceID => [socket, tasks]].
+     * @var IoPoll Poll.
      */
-    protected $waitingForRead = array();
-
-    /**
-     * @var array IO queue that waiting to write [resourceID => [socket, tasks]].
-     */
-    protected $waitingForWrite = array();
-
+    protected $poll;
 
     /**
      * Init task queue.
@@ -46,6 +41,7 @@ class Scheduler
     public function __construct()
     {
         $this->taskQueue = new SplQueue();
+        $this->poll = new IoPoll($this);
     }
 
     /**
@@ -60,6 +56,7 @@ class Scheduler
         $task = new Task($tid, $coroutine);
         $this->taskMap[$tid] = $task;
         $this->schedule($task);
+
         return $tid;
     }
 
@@ -78,7 +75,7 @@ class Scheduler
      */
     public function run()
     {
-        $this->newTask($this->ioPollTask());
+        // $this->newTask($this->poll->ioPollTask());
 
         while (!$this->taskQueue->isEmpty()) {
             $task = $this->taskQueue->dequeue();
@@ -91,6 +88,7 @@ class Scheduler
                     $task->setException($e);
                     $this->schedule($task);
                 }
+
                 continue;
             }
 
@@ -130,100 +128,13 @@ class Scheduler
     }
 
     /**
-     * IO queue that waiting to read.
-     * It can be used by SystemCall.
+     * Get the task queue.
      *
-     * @param Resource $socket IO stream.
-     * @param Task     $task   The task that from the resource.
+     * @return array
      */
-    public function waitForRead($socket, Task $task)
+    public function getTaskQueue()
     {
-        if (isset($this->waitingForRead[(int) $socket])) {
-            $this->waitingForRead[(int) $socket][1][] = $task;
-        } else {
-            $this->waitingForRead[(int) $socket] = array($socket, [$task]);
-        }
-    }
-
-    /**
-     * IO queue that waiting to write.
-     * It can be used by SystemCall.
-     *
-     * @param Resource $socket IO stream.
-     * @param Task     $task   The task that from the resource.
-     */
-    public function waitForWrite($socket, Task $task)
-    {
-        if (isset($this->waitingForWrite[(int) $socket])) {
-            $this->waitingForWrite[(int) $socket][1][] = $task;
-        } else {
-            $this->waitingForWrite[(int) $socket] = array($socket, [$task]);
-        }
-    }
-
-    /**
-     * IO poll.
-     * Get the tasks form the IO waiting/writing queue.
-     * Add the socket tasks into the schedule.
-     * Or block indefinitely until some new streams occurs.
-     *
-     * @param int|null $timeout 0 for not wait, and null for block until an event on the watched streams occurs.
-     */
-    protected function ioPoll($timeout)
-    {
-        $rSocks = [];
-        foreach ($this->waitingForRead as list($socket)) {
-            $rSocks[] = $socket;
-        }
-
-        $wSocks = [];
-        foreach ($this->waitingForWrite as list($socket)) {
-            $wSocks[] = $socket;
-        }
-
-        $eSocks = [];
-
-        $res = @stream_select($rSocks, $wSocks, $eSocks, $timeout);
-        if (!$res) {
-            return;
-        }
-
-        foreach ($rSocks as $socket) {
-            list(, $tasks) = $this->waitingForRead[(int) $socket];
-            unset($this->waitingForRead[(int) $socket]);
-
-            foreach ($tasks as $task) {
-                $this->schedule($task);
-            }
-        }
-
-        foreach ($wSocks as $socket) {
-            list(, $tasks) = $this->waitingForWrite[(int) $socket];
-            unset($this->waitingForWrite[(int) $socket]);
-
-            foreach ($tasks as $task) {
-                $this->schedule($task);
-            }
-        }
-    }
-
-    /**
-     * Set the IO poll status.
-     * 0 for not wait.
-     * Null for block until an event on the watched streams occurs.
-     *
-     * @return Generator
-     */
-    protected function ioPollTask()
-    {
-        while (true) {
-            if ($this->taskQueue->isEmpty()) {
-                $this->ioPoll(null);
-            } else {
-                $this->ioPoll(0);
-            }
-            yield;
-        }
+        return $this->taskQueue;
     }
 }
 
