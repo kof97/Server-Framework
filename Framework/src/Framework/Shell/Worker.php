@@ -86,7 +86,7 @@ class Worker
         $connection->protocol = $this->scheme === 'tcp' ? 'Framework\Protocol\Http' : '';
 
         $this->onMessage = function ($conn, $data) {
-            $conn->send('hello');
+            $conn->send('hello, phper');
         };
 
         $connection->onMessage = $this->onMessage;
