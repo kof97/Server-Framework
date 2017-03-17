@@ -89,10 +89,10 @@ class Worker
             $conn->send('hello, phper');
         };
 
-        $connection->onMessage = $this->onMessage;
-        $connection->onClose = $this->onClose;
-        $connection->onError = $this->onError;
-        $connection->onBufferFull = $this->onBufferFull;
+        $connection->onMessage     = $this->onMessage;
+        $connection->onClose       = $this->onClose;
+        $connection->onError       = $this->onError;
+        $connection->onBufferFull  = $this->onBufferFull;
         $connection->onBufferDrain = $this->onBufferDrain;
     }
 
