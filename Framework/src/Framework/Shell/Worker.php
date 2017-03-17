@@ -46,8 +46,8 @@ class Worker
         $this->socketName = $socket_name;
 
         isset($info['scheme']) && $this->scheme = $info['scheme'];
-        isset($info['host']) && $this->host = $info['host'];
-        isset($info['port']) && $this->port = $info['port'];
+        isset($info['host']) && $this->host     = $info['host'];
+        isset($info['port']) && $this->port     = $info['port'];
         isset($info['path']) && $this->endpoint = $info['path'];
     }
 
