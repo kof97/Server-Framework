@@ -53,6 +53,7 @@ class Worker
 
     public function run()
     {
+
         $this->listen();
     }
 
