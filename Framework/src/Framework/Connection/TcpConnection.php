@@ -205,7 +205,7 @@ class TcpConnection extends ConnectionInterface
     public function __construct($socket, $remote_address = '', $worker = null)
     {
         self::$statistics['connection_count']++;
-        $this->id      = $this->_id = self::$_idRecorder++;
+        $this->id = $this->_id = self::$_idRecorder++;
         $this->_socket = $socket;
 
         $this->worker = $worker;
