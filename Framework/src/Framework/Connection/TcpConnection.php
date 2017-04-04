@@ -208,7 +208,6 @@ class TcpConnection extends ConnectionInterface
 
         $this->id = $this->_id = self::$_idRecorder++;
         $this->_socket = $socket;
-
         $this->worker = $worker;
 
         stream_set_blocking($this->_socket, 0);
