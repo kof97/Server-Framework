@@ -16,22 +16,28 @@ class AutoLoader
      */
     public static function load($class)
     {
-        $namespace = 'Framework';
-        $prefix = $namespace . '\\';
+        $namespace_list = array(
+			'Framework',
+			'Server',
+		);
 
-        $len = strlen($prefix);
-        if (strncmp($prefix, $class, $len) !== 0) {
-            return false;
-        }
+		foreach ($namespace_list as $namespace) {
+			$prefix = $namespace . '\\';
 
-        $class_name = substr($class, $len);
+        	$len = strlen($prefix);
+	        if (strncmp($prefix, $class, $len) !== 0) {
+    	        return false;
+        	}
 
-        $file = rtrim(__DIR__, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR
-                 . strtr($class_name, '\\', DIRECTORY_SEPARATOR) . '.php';
+	        $class_name = substr($class, $len);
 
-        if (is_file($file)) {
-            require $file;
-        }
+    	    $file = rtrim(__DIR__, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR . strtr($class_name, '\\', DIRECTORY_SEPARATOR) . '.php';
+
+	        if (is_file($file)) {
+    	        require $file;
+        	}
+		}
+        
     }
 }
 
