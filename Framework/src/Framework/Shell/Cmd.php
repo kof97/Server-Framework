@@ -12,71 +12,71 @@ use Framework\Common\File;
  */
 class Cmd
 {
-    private function __construct()
-    {
-        // It should never be used.
-    }
+	private function __construct()
+	{
+		// It should never be used.
+	}
 
-    /**
-     * Cli init.
-     *
-     * @param string $conf Config path.
-     *
-     * @return void
-     */
-    public static function init($conf)
-    {
-        $conf = parse_ini_file($conf, true);
+	/**
+	 * Cli init.
+	 *
+	 * @param string $conf Config path.
+	 *
+	 * @return void
+	 */
+	public static function init($conf)
+	{
+		$conf = parse_ini_file($conf, true);
 
-        $mode = isset($conf['base']['mode']) ? $conf['base']['mode'] : 'restful';
-        $root = isset($conf['base']['root']) ? $conf['base']['root'] : '';
+		$mode = isset($conf['base']['mode']) ? $conf['base']['mode'] : 'restful';
+		$root = isset($conf['base']['root']) ? $conf['base']['root'] : '';
 
-        if (!is_dir($root)) {
-            exit("Please check your config, '($root)' is not exist" . PHP_EOL);
-        }
+		if (!is_dir($root)) {
+			exit("Please check your config, '($root)' is not exist" . PHP_EOL);
+		}
 
-        $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+		$root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-        $run = $root . 'run';
-        $log = $root . 'log';
+		$run = $root . 'run';
+		$log = $root . 'log';
 
-        is_dir($run) || File::makeDir($run);
-        is_dir($log) || File::makeDir($log);
+		is_dir($run) || File::makeDir($run);
+		is_dir($log) || File::makeDir($log);
 
-        if (!isset($conf[$mode])) {
-            throw new Exception("Not found the mode ['{$mode}']");
-        }
+		if (!isset($conf[$mode])) {
+			throw new Exception("Not found the mode ['{$mode}']");
+		}
 
-        $conf = $conf[$mode];
+		$conf = $conf[$mode];
 
-        switch ($mode) {
-            case 'restful':
-                self::initRestful($conf, $root);
-                break;
+		switch ($mode) {
+			case 'restful':
+				self::initRestful($conf, $root);
+				break;
 
-            default:
-                break;
-        }
-    }
+			default:
+				break;
+		}
+	}
 
-    private static function initRestful($conf, $root)
-    {
-        $restful_root = $root . 'restful' . DIRECTORY_SEPARATOR;
+	private static function initRestful($conf, $root)
+	{
+		$restful_root = $root . 'restful' . DIRECTORY_SEPARATOR;
 
-        is_dir($restful_root) || File::makeDir($restful_root);
+		is_dir($restful_root) || File::makeDir($restful_root);
 
-        $resource_root = $restful_root . 'Resource';
-        $model_root = $restful_root . 'Model';
+		$resource_root = $restful_root . 'Resource';
+		$model_root = $restful_root . 'Model';
 
-        is_dir($resource_root) || File::makeDir($resource_root);
-        is_dir($model_root) || File::makeDir($model_root);
+		is_dir($resource_root) || File::makeDir($resource_root);
+		is_dir($model_root) || File::makeDir($model_root);
 
-        chmod($restful_root, 0644);
-        chmod($resource_root, 0644);
-        chmod($model_root, 0644);
+		chmod($restful_root, 0644);
+		chmod($resource_root, 0644);
+		chmod($model_root, 0644);
 
-        echo PHP_EOL . 'Init restful OK' . PHP_EOL;
-    }
+		echo PHP_EOL . 'Init restful OK' . PHP_EOL;
+	}
 }
 
 // end of script

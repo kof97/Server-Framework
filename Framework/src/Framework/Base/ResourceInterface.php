@@ -9,9 +9,9 @@ namespace Framework\Base;
  */
 interface ResourceInterface
 {
-    public function preRun();
+	public function preRun();
 
-    public function afterRun();
+	public function afterRun();
 }
 
 // end of script

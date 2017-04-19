@@ -46,15 +46,15 @@ By Arno
 * 编辑器设置示例：
 
 ```
-    sublime:
-        "tab_size": 4,
-        "translate_tabs_to_spaces": true
-    vim:
-        :set tabstop=4    "设定tab宽度为4个字符
-        :set shiftwidth=4 "设定自动缩进为4个字符
-        :set expandtab    "输入 tab 时自动转换为空格
-    emacs:
-        (setq tab-width 4)
+	sublime:
+		"tab_size": 4,
+		"translate_tabs_to_spaces": true
+	vim:
+		:set tabstop=4    "设定tab宽度为4个字符
+		:set shiftwidth=4 "设定自动缩进为4个字符
+		:set expandtab    "输入 tab 时自动转换为空格
+	emacs:
+		(setq tab-width 4)
 ```
 
 ## 概念统一
@@ -85,7 +85,7 @@ By Arno
 * 常量的使用范围：配置名，公共库名或者类名等，全局常量建议定义在配置文件里
 
 ```
-    define('DB_MASTER', 'MASTER');
+	define('DB_MASTER', 'MASTER');
 ```
 
 ### 变量
@@ -93,7 +93,7 @@ By Arno
 * 局部变量采用下划线命名的方式，即全部使用小写，多个单词使用 `_` 分隔
 
 ```
-    $database_name = 'kof97';
+	$database_name = 'kof97';
 ```
 
 ### 函数名
@@ -101,10 +101,10 @@ By Arno
 * 函数名采用驼峰命名
 
 ```
-    function testCase($argv1, $argv2)
-    {
-        // function
-    }
+	function testCase($argv1, $argv2)
+	{
+		// function
+	}
 ```
 
 ### 面向对象
@@ -118,32 +118,32 @@ By Arno
 ```
 <?php
 
-    class CurlClient
-    {
-        protected $appId;
+	class CurlClient
+	{
+		protected $appId;
 
-        protected $appKey;
+		protected $appKey;
 
-        protected $curl;
+		protected $curl;
 
-        protected $curlOptions;
+		protected $curlOptions;
 
-        function __construct($app_id, $app_key)
-        {
-            $this->appId = $app_id;
-            $this->appKey = $app_key;
-        }
+		function __construct($app_id, $app_key)
+		{
+			$this->appId = $app_id;
+			$this->appKey = $app_key;
+		}
 
-        public function init()
-        {
+		public function init()
+		{
 
-        }
+		}
 
-        public function getInstance()
-        {
-            return $this->curl;
-        }
-    }
+		public function getInstance()
+		{
+			return $this->curl;
+		}
+	}
 
 // end of script
 
@@ -163,42 +163,42 @@ By Arno
  */
 class Curl
 {
-    /**
-     * @var Curl instance.
-     */
-    protected $curl;
+	/**
+	 * @var Curl instance.
+	 */
+	protected $curl;
 
-    /**
-     * Check the curl extension.
-     */
-    public function __construct()
-    {
-        if (!extension_loaded('curl')) {
-            throw new Exception('The cURL extension must be loaded to use the "curl".');
-        }
-    }
+	/**
+	 * Check the curl extension.
+	 */
+	public function __construct()
+	{
+		if (!extension_loaded('curl')) {
+			throw new Exception('The cURL extension must be loaded to use the "curl".');
+		}
+	}
 
-    /**
-     * Init a new curl instance.
-     *
-     * @params string $app_id  The app id.
-     * @params array  $headers The request headers.
-     */
-    public function init($app_id, $headers = array())
-    {
-        // init
-    }
+	/**
+	 * Init a new curl instance.
+	 *
+	 * @params string $app_id  The app id.
+	 * @params array  $headers The request headers.
+	 */
+	public function init($app_id, $headers = array())
+	{
+		// init
+	}
 
-    /**
-     * Set a curl option.
-     *
-     * @param string $key
-     * @param string $value
-     */
-    public function setopt($key, $value)
-    {
-        curl_setopt($this->curl, $key, $value);
-    }
+	/**
+	 * Set a curl option.
+	 *
+	 * @param string $key
+	 * @param string $value
+	 */
+	public function setopt($key, $value)
+	{
+		curl_setopt($this->curl, $key, $value);
+	}
 }
 
 //end of script

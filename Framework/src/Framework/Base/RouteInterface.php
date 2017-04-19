@@ -9,13 +9,13 @@ namespace Framework\Base;
  */
 interface RouteInterface
 {
-    public function load();
+	public function load();
 
-    public function run();
+	public function run();
 
-    public function getResource();
+	public function getResource();
 
-    public function getAct();
+	public function getAct();
 }
 
 // end of script

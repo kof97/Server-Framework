@@ -9,15 +9,15 @@ namespace Framework\Resource;
  */
 class RouteProcess
 {
-    private function __construct()
-    {
-        // It should never be used.
-    }
+	private function __construct()
+	{
+		// It should never be used.
+	}
 
-    public static function processRoute()
-    {
-        
-    }
+	public static function processRoute()
+	{
+		
+	}
 }
 
 // end of script

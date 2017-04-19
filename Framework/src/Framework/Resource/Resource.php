@@ -11,20 +11,20 @@ use Framework\Base\ResourceInterface;
  */
 class Resource implements ResourceInterface
 {
-    public function __construct()
-    {
+	public function __construct()
+	{
 
-    }
+	}
 
-    public function preRun()
-    {
+	public function preRun()
+	{
 
-    }
+	}
 
-    public function afterRun()
-    {
+	public function afterRun()
+	{
 
-    }
+	}
 }
 
 // end of script

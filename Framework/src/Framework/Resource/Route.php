@@ -13,134 +13,134 @@ use Framework\Base\RouteInterface;
  */
 class Route implements RouteInterface
 {
-    /**
-     * @var The request resource.
-     */
-    protected $resource;
+	/**
+	 * @var The request resource.
+	 */
+	protected $resource;
 
-    /**
-     * @var The request act.
-     */
-    protected $act;
+	/**
+	 * @var The request act.
+	 */
+	protected $act;
 
-    /**
-     * @var The request headers.
-     */
-    protected $headers;
+	/**
+	 * @var The request headers.
+	 */
+	protected $headers;
 
-    /**
-     * @var The function that active before run.
-     */
-    protected $preRunFunc;
+	/**
+	 * @var The function that active before run.
+	 */
+	protected $preRunFunc;
 
-    /**
-     * @var The function that active after run.
-     */
-    protected $afterRunFunc;
+	/**
+	 * @var The function that active after run.
+	 */
+	protected $afterRunFunc;
 
-    /**
-     * @var The Get request.
-     */
-    protected $paramsGet = array();
+	/**
+	 * @var The Get request.
+	 */
+	protected $paramsGet = array();
 
-    public function __construct()
-    {
-        $this->preRunFunc = 'preRun';
-        $this->afterRunFunc = 'afterRun';
+	public function __construct()
+	{
+		$this->preRunFunc = 'preRun';
+		$this->afterRunFunc = 'afterRun';
 
-        $this->paramsGet = $_GET;
-    }
+		$this->paramsGet = $_GET;
+	}
 
-    public function load()
-    {
-        $params = $this->paramsGet;
+	public function load()
+	{
+		$params = $this->paramsGet;
 
-        $this->resource = isset($params['mod']) ? $this->processClassName($params['mod']) : '';
-        $this->act = isset($params['act']) ? $this->processClassName($params['act']) : '';
+		$this->resource = isset($params['mod']) ? $this->processClassName($params['mod']) : '';
+		$this->act = isset($params['act']) ? $this->processClassName($params['act']) : '';
 
-        $this->headers = getallheaders();
-    }
+		$this->headers = getallheaders();
+	}
 
-    public function run()
-    {
-        $class = 'Resource\\' . $this->resource;
+	public function run()
+	{
+		$class = 'Resource\\' . $this->resource;
 
-        if (!class_exists($class)) {
-            throw new Exception("The class ['{$class}'] is not exist");
-        }
+		if (!class_exists($class)) {
+			throw new Exception("The class ['{$class}'] is not exist");
+		}
 
-        $obj = new $class();
+		$obj = new $class();
 
-        $method = $this->act;
+		$method = $this->act;
 
-        if (!method_exists($obj, $method)) {
-            throw new Exception("The method ['{$method}'] is not found in class ['{$class}']");
-        }
+		if (!method_exists($obj, $method)) {
+			throw new Exception("The method ['{$method}'] is not found in class ['{$class}']");
+		}
 
-        $code = 0;
-        $msg = '';
-        $res = false;
+		$code = 0;
+		$msg = '';
+		$res = false;
 
-        try {
-            $res = call_user_func(array($obj, $this->preRunFunc));
-        } catch (Exception $e) {
-            $code = $e->getCode();
-            $msg = $e->getMessage();
-            echo $msg . PHP_EOL;
-        }
+		try {
+			$res = call_user_func(array($obj, $this->preRunFunc));
+		} catch (Exception $e) {
+			$code = $e->getCode();
+			$msg = $e->getMessage();
+			echo $msg . PHP_EOL;
+		}
 
-        if (!$code) {
-            try {
-                call_user_func(array($obj, $method));
-            } catch (Exception $e) {
-                $code = $e->getCode();
-                $msg = $e->getMessage();
-            }
+		if (!$code) {
+			try {
+				call_user_func(array($obj, $method));
+			} catch (Exception $e) {
+				$code = $e->getCode();
+				$msg = $e->getMessage();
+			}
 
-            if ($code) {
-                echo $msg . PHP_EOL;
-            }
-        }
+			if ($code) {
+				echo $msg . PHP_EOL;
+			}
+		}
 
-        call_user_func(array($obj, $this->afterRunFunc));
-    }
+		call_user_func(array($obj, $this->afterRunFunc));
+	}
 
-    private function processClassName($name)
-    {
-        $name = strtr($name, '_', ' ');
+	private function processClassName($name)
+	{
+		$name = strtr($name, '_', ' ');
 
-        $class_name = str_replace(' ', '', ucwords($name));
+		$class_name = str_replace(' ', '', ucwords($name));
 
-        return $class_name;
-    }
+		return $class_name;
+	}
 
-    public function setPreRunFunc($pre_run_function)
-    {
-        if (!empty($pre_run_function)) {
-            $this->preRunFunc = $pre_run_function;
-        }
+	public function setPreRunFunc($pre_run_function)
+	{
+		if (!empty($pre_run_function)) {
+			$this->preRunFunc = $pre_run_function;
+		}
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setAfterRunFunc($after_run_function)
-    {
-        if (!empty($after_run_function)) {
-            $this->afterRunFunc = $after_run_function;
-        }
+	public function setAfterRunFunc($after_run_function)
+	{
+		if (!empty($after_run_function)) {
+			$this->afterRunFunc = $after_run_function;
+		}
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getResource()
-    {
-        return $this->resource;
-    }
+	public function getResource()
+	{
+		return $this->resource;
+	}
 
-    public function getAct()
-    {
-        return $this->act;
-    }
+	public function getAct()
+	{
+		return $this->act;
+	}
 }
 
 // end of script

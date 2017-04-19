@@ -9,28 +9,28 @@ namespace Framework\Common;
  */
 class TypeValidate
 {
-    private function __construct()
-    {
-        // It should never be used.
-    }
+	private function __construct()
+	{
+		// It should never be used.
+	}
 
-    public static function isPositiveInteger($num)
-    {
-        if (!self::isInteger($num)) {
-            return false;
-        }
+	public static function isPositiveInteger($num)
+	{
+		if (!self::isInteger($num)) {
+			return false;
+		}
 
-        if ($num < 0) {
-            return false;
-        }
+		if ($num < 0) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    public static function isInteger($num)
-    {
+	public static function isInteger($num)
+	{
 
-    }
+	}
 }
 
 // end of script
