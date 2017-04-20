@@ -2,9 +2,9 @@
 
 namespace Framework;
 
+use \Loader;
 use \Exception;
 use Framework\Common\File;
-use Framework\Common\Loader;
 use Framework\Core\Monitor;
 use Framework\Resource\Route;
 
@@ -20,49 +20,20 @@ class Application
 		// It should never be used.
 	}
 
-	public static function run($conf)
+	public static function run($root)
 	{
-		$conf = parse_ini_file($conf, true);
-
-		$mode = isset($conf['base']['mode']) ? $conf['base']['mode'] : 'restful';
-		$root = isset($conf['base']['root']) ? $conf['base']['root'] : '';
-
-		if (!is_dir($root)) {
-			throw new Exception("Please check your config, '($root)' is not exist");
-		}
-
-		if (!isset($conf[$mode])) {
-			throw new Exception("Not found the mode ['{$mode}']");
-		}
-
-		$conf = $conf[$mode];
-
-		switch ($mode) {
-			case 'restful':
-				self::runRestful($conf, $root);
-				break;
-
-			default:
-				break;
-		}
-	}
-
-	private static function runRestful($conf, $root)
-	{
-		$root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-
-		$restful_root = $root . (isset($conf['restful_root']) ? $conf['restful_root'] : 'restful');
-
-		if (!is_dir($restful_root)) {
-			throw new Exception('The dir is not exist, please run "php bin/init.php" first');
-		}
-
-		Loader::register(array('Resource', 'Model'), $restful_root);
+		Loader::register(array('resource', 'model', 'inc'), $root);
 
 		$monitor = new Monitor();
 
-		$monitor->setRoute(new Route());
+		$route_class = 'inc\Router';
+		if (class_exists($route_class)) {
+			$route = new $route_class;
+		} else {
+			$route = new Route;
+		}
 
+		$monitor->setRoute($route);
 		$monitor->run();
 	}
 }

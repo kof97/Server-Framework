@@ -1,7 +1,5 @@
 <?php
 
-namespace Framework\Common;
-
 /**
  * Class Loader.
  *
@@ -40,5 +38,7 @@ class Loader
 		}
 	}
 }
+
+Loader::register(array('Framework', 'Server'), ROOT . 'src');
 
 // end of script

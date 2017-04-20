@@ -7,7 +7,7 @@ if (version_compare(PHP_VERSION, '5.4.0', '<')) {
 $root = dirname(__DIR__) . DIRECTORY_SEPARATOR;
 $conf = $root . 'conf' . DIRECTORY_SEPARATOR . 'server.ini';
 
-require $root . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
+require $root . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'loader.php';
 
 Framework\Shell\Cmd::init($conf);
 

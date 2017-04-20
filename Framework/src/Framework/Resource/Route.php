@@ -29,25 +29,12 @@ class Route implements RouteInterface
 	protected $headers;
 
 	/**
-	 * @var The function that active before run.
-	 */
-	protected $preRunFunc;
-
-	/**
-	 * @var The function that active after run.
-	 */
-	protected $afterRunFunc;
-
-	/**
 	 * @var The Get request.
 	 */
 	protected $paramsGet = array();
 
 	public function __construct()
 	{
-		$this->preRunFunc = 'preRun';
-		$this->afterRunFunc = 'afterRun';
-
 		$this->paramsGet = $_GET;
 	}
 
@@ -63,7 +50,7 @@ class Route implements RouteInterface
 
 	public function run()
 	{
-		$class = 'Resource\\' . $this->resource;
+		$class = 'resource\\' . $this->resource;
 
 		if (!class_exists($class)) {
 			throw new Exception("The class ['{$class}'] is not exist");
@@ -81,14 +68,6 @@ class Route implements RouteInterface
 		$msg = '';
 		$res = false;
 
-		try {
-			$res = call_user_func(array($obj, $this->preRunFunc));
-		} catch (Exception $e) {
-			$code = $e->getCode();
-			$msg = $e->getMessage();
-			echo $msg . PHP_EOL;
-		}
-
 		if (!$code) {
 			try {
 				call_user_func(array($obj, $method));
@@ -101,35 +80,15 @@ class Route implements RouteInterface
 				echo $msg . PHP_EOL;
 			}
 		}
-
-		call_user_func(array($obj, $this->afterRunFunc));
 	}
 
-	private function processClassName($name)
+	protected function processClassName($name)
 	{
 		$name = strtr($name, '_', ' ');
 
 		$class_name = str_replace(' ', '', ucwords($name));
 
 		return $class_name;
-	}
-
-	public function setPreRunFunc($pre_run_function)
-	{
-		if (!empty($pre_run_function)) {
-			$this->preRunFunc = $pre_run_function;
-		}
-
-		return $this;
-	}
-
-	public function setAfterRunFunc($after_run_function)
-	{
-		if (!empty($after_run_function)) {
-			$this->afterRunFunc = $after_run_function;
-		}
-
-		return $this;
 	}
 
 	public function getResource()
