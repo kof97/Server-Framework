@@ -37,7 +37,8 @@ class AutoLoader
 				require $file;
 			}
 		}
-		
+
+		Loader::register(array('Resource', 'Model'), $restful_root);
 	}
 }
 

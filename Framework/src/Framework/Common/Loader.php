@@ -31,8 +31,7 @@ class Loader
 
 				$class_name = substr($class, $len);
 
-				$file = $root . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR
-						 . strtr($class_name, '\\', DIRECTORY_SEPARATOR) . '.php';
+				$file = $root . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR . strtr($class_name, '\\', DIRECTORY_SEPARATOR) . '.php';
 
 				if (is_file($file)) {
 					require $file;
