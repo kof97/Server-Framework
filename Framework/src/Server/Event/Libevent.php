@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Event;
+namespace Server\Event;
 
 use Framework\Exception\Error;
 

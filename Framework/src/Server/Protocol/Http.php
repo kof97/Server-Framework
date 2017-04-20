@@ -1,9 +1,9 @@
 <?php
 
-namespace Framework\Protocol;
+namespace Server\Protocol;
 
-use Framework\Connection\TcpConnection;
-// use Framework\Shell\Master;
+use Server\Connection\TcpConnection;
+// use Server\Shell\Master;
 use \Exception;
 
 /**

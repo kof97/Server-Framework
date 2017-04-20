@@ -1,10 +1,9 @@
 <?php
 
-$root = dirname(__DIR__) . DIRECTORY_SEPARATOR;
+require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'etc/bootstrap.php';
+require ROOT . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'loader.php';
 
-require $root . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
-
-$test = new Framework\Shell\Master();
+$test = new Server\Shell\Master();
 
 $test->init($argc, $argv);
 

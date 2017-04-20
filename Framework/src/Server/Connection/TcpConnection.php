@@ -1,10 +1,10 @@
 <?php
 
-namespace Framework\Connection;
+namespace Server\Connection;
 
-use Framework\Event\EventInterface;
-use Framework\Shell\Master;
-use Framework\Shell\Worker;
+use Server\Event\EventInterface;
+use Server\Shell\Master;
+use Server\Shell\Worker;
 use Exception;
 
 /**
@@ -91,9 +91,9 @@ class TcpConnection extends ConnectionInterface
 
 	/**
 	 * Application layer protocol.
-	 * The format is like this Framework\\Protocol\\Http.
+	 * The format is like this Server\\Protocol\\Http.
 	 *
-	 * @var \Framework\Protocol\ProtocolInterface
+	 * @var \Server\Protocol\ProtocolInterface
 	 */
 	public $protocol = null;
 

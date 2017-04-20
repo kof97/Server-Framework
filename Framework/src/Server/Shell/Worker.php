@@ -1,9 +1,9 @@
 <?php
 
-namespace Framework\Shell;
+namespace Server\Shell;
 
-use Framework\Event\EventInterface;
-use Framework\Connection\TcpConnection;
+use Server\Event\EventInterface;
+use Server\Connection\TcpConnection;
 
 /**
  * Class Worker.
@@ -81,7 +81,7 @@ class Worker
 		$this->connections[$connection->id] = $connection;
 
 		// $connection->worker = $this;
-		$connection->protocol = $this->scheme === 'tcp' ? 'Framework\Protocol\Http' : '';
+		$connection->protocol = $this->scheme === 'tcp' ? 'Server\Protocol\Http' : '';
 
 		$this->onMessage = function ($conn, $data) {
 			$conn->send('hello, phper');

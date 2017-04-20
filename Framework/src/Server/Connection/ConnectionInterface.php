@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Connection;
+namespace Server\Connection;
 
 /**
  * ConnectionInterface.

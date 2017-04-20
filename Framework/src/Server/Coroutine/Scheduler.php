@@ -1,8 +1,8 @@
 <?php
 
-namespace Framework\Coroutine;
+namespace Server\Coroutine;
 
-use Framework\Coroutine\IoPoll;
+use Server\Coroutine\IoPoll;
 use \SplQueue;
 use \Generator;
 use \Exception;

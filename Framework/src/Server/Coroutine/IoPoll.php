@@ -1,8 +1,8 @@
 <?php
 
-namespace Framework\Coroutine;
+namespace Server\Coroutine;
 
-use Framework\Coroutine\Scheduler;
+use Server\Coroutine\Scheduler;
 
 /**
  * Class IoPoll.

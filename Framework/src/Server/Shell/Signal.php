@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Shell;
+namespace Server\Shell;
 
 /**
  * Class Signal.

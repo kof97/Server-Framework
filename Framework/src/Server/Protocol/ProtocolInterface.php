@@ -1,8 +1,8 @@
 <?php
 
-namespace Framework\Protocol;
+namespace Server\Protocol;
 
-use Framework\Connection\ConnectionInterface;
+use Server\Connection\ConnectionInterface;
 
 /**
  * Protocol interface

@@ -1,9 +1,9 @@
 <?php
 
-namespace Framework\Shell;
+namespace Server\Shell;
 
 use \Exception;
-use Framework\Common\File;
+use Server\Common\File;
 
 /**
  * Class Cmd.

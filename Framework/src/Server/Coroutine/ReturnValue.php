@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Coroutine;
+namespace Server\Coroutine;
 
 /**
  * Class ReturnValue.

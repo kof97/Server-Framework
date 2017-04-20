@@ -1,9 +1,9 @@
 <?php
 
-namespace Framework\Shell;
+namespace Server\Shell;
 
-use Framework\Shell\Signal;
-use Framework\Event\EventInterface;
+use Server\Shell\Signal;
+use Server\Event\EventInterface;
 
 /**
  * Class Master.
@@ -244,7 +244,7 @@ class Master
 	protected function prepareEventClass()
 	{
 		if (!$this->eventClassName) {
-			$event_class = '\\Framework\\Event\\' . ucfirst($this->getEventLoopName());
+			$event_class = '\\Server\\Event\\' . ucfirst($this->getEventLoopName());
 
 			if (!$this->getEventLoopName()) {
 				exit('no extension');
