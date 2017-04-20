@@ -2,7 +2,6 @@
 
 namespace Framework\Resource;
 
-use Resource;
 use \Exception;
 use Framework\Base\RouteInterface;
 
@@ -29,6 +28,16 @@ class Route implements RouteInterface
 	protected $headers;
 
 	/**
+	 * @var The request class.
+	 */
+	protected $class;
+
+	/**
+	 * @var The request method.
+	 */
+	protected $method;
+
+	/**
 	 * @var The Get request.
 	 */
 	protected $paramsGet = array();
@@ -46,31 +55,19 @@ class Route implements RouteInterface
 		$this->act = isset($params['act']) ? $this->processClassName($params['act']) : '';
 
 		$this->headers = getallheaders();
+
+		$this->prepare();
 	}
 
 	public function run()
 	{
-		$class = 'resource\\' . $this->resource;
-
-		if (!class_exists($class)) {
-			throw new Exception("The class ['{$class}'] is not exist");
-		}
-
-		$obj = new $class();
-
-		$method = $this->act;
-
-		if (!method_exists($obj, $method)) {
-			throw new Exception("The method ['{$method}'] is not found in class ['{$class}']");
-		}
-
 		$code = 0;
 		$msg = '';
 		$res = false;
 
 		if (!$code) {
 			try {
-				call_user_func(array($obj, $method));
+				call_user_func(array($this->class, $this->method));
 			} catch (Exception $e) {
 				$code = $e->getCode();
 				$msg = $e->getMessage();
@@ -79,6 +76,22 @@ class Route implements RouteInterface
 			if ($code) {
 				echo $msg . PHP_EOL;
 			}
+		}
+	}
+
+	protected function prepare() {
+		$class = 'resource\\' . $this->resource;
+
+		if (!class_exists($class)) {
+			throw new Exception("The class ['{$class}'] is not exist");
+		}
+
+		$this->class = new $class();
+
+		$this->method = $this->act;
+
+		if (!method_exists($this->class, $this->method)) {
+			throw new Exception("The method ['{$method}'] is not found in class ['{$class}']");
 		}
 	}
 
