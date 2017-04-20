@@ -24,21 +24,10 @@ class Cmd
 	 *
 	 * @return void
 	 */
-	public static function init($conf)
+	public static function init()
 	{
-		$conf = parse_ini_file($conf, true);
-
-		$mode = isset($conf['base']['mode']) ? $conf['base']['mode'] : 'restful';
-		$root = isset($conf['base']['root']) ? $conf['base']['root'] : '';
-
-		if (!is_dir($root)) {
-			exit("Please check your config, '($root)' is not exist" . PHP_EOL);
-		}
-
-		$root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-
-		$run = $root . 'run';
-		$log = $root . 'log';
+		$run = ROOT . 'run';
+		$log = ROOT . 'log';
 
 		is_dir($run) || File::makeDir($run);
 		is_dir($log) || File::makeDir($log);
