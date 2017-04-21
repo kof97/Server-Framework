@@ -20,7 +20,7 @@ class Router extends Route
 
 		if (!$code) {
 			try {
-				call_user_func(array($this->class, $this->method));
+				$res = call_user_func(array($this->class, $this->method));
 			} catch (Exception $e) {
 				$code = $e->getCode();
 				$msg = $e->getMessage();
@@ -30,6 +30,8 @@ class Router extends Route
 				echo $msg . PHP_EOL;
 			}
 		}
+
+		return $res;
 	}
 }
 

@@ -27,11 +27,6 @@ class Monitor
 	 */
 	protected $act;
 
-	/**
-	 * @var The final response.
-	 */
-	protected $response;
-
 	public function __construct()
 	{
 		// init
@@ -40,17 +35,16 @@ class Monitor
 	public function init() {
 		$code = 0;
 		$msg = '';
+		$data = '';
 
 		try {
-			$this->run();
+			$data = $this->run();
 		} catch (Exception $e) {
 			$code = $e->getCode();
 			$msg = $e->getMessage();
-			
-			$this->response = json_encode(array('code' => $code, 'msg' => $msg));
 		}
 
-		$this->display();
+		$this->display($code, $msg, $data);
 	}
 
 	protected function run()
@@ -63,8 +57,10 @@ class Monitor
 		$this->act = $route->getAct();
 
 		$this->preRun();
-		$this->response = $route->run();
+		$response = $route->run();
 		$this->afterRun();
+
+		return $response;
 	}
 
 	private function preRun()
@@ -77,9 +73,15 @@ class Monitor
 
 	}
 
-	private function display()
+	private function display($code = 0, $msg = '', $data = '')
 	{
-		echo $this->response;
+		$response = array(
+			'code' => $code,
+			'msg'  => $msg,
+			'data' => $data
+		);
+
+		echo json_encode($response);
 	}
 
 	public function setRoute(RouteInterface $route)

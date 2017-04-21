@@ -61,7 +61,9 @@ class Route implements RouteInterface
 
 	public function run()
 	{
-		call_user_func(array($this->class, $this->method));
+		$res = call_user_func(array($this->class, $this->method));
+
+		return $res;
 	}
 
 	protected function prepare() {
