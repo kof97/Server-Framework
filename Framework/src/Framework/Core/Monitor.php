@@ -30,14 +30,30 @@ class Monitor
 	/**
 	 * @var The final response.
 	 */
-	protected $res;
+	protected $response;
 
 	public function __construct()
 	{
 		// init
 	}
 
-	public function run()
+	public function init() {
+		$code = 0;
+		$msg = '';
+
+		try {
+			$this->run();
+		} catch (Exception $e) {
+			$code = $e->getCode();
+			$msg = $e->getMessage();
+			
+			$this->response = json_encode(array('code' => $code, 'msg' => $msg));
+		}
+
+		$this->display();
+	}
+
+	protected function run()
 	{
 		$route = $this->route;
 
@@ -47,20 +63,8 @@ class Monitor
 		$this->act = $route->getAct();
 
 		$this->preRun();
-
-		$code = 0;
-		$msg = '';
-
-		try {
-			$this->res = $route->run();
-		} catch (Exception $e) {
-			$code = $e->getCode();
-			$msg = $e->getMessage();
-			echo $msg . PHP_EOL;
-		}
-
+		$this->response = $route->run();
 		$this->afterRun();
-		$this->display();
 	}
 
 	private function preRun()
@@ -75,7 +79,7 @@ class Monitor
 
 	private function display()
 	{
-
+		echo $this->response;
 	}
 
 	public function setRoute(RouteInterface $route)

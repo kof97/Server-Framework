@@ -33,7 +33,7 @@ class Application
 		}
 
 		$monitor->setRoute($route);
-		$monitor->run();
+		$monitor->init();
 	}
 }
 

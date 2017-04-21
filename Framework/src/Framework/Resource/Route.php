@@ -52,7 +52,7 @@ class Route implements RouteInterface
 		$params = $this->paramsGet;
 
 		$this->resource = isset($params['mod']) ? $this->processClassName($params['mod']) : '';
-		$this->act = isset($params['act']) ? $this->processClassName($params['act']) : '';
+		$this->act = isset($params['act']) ? lcfirst($this->processClassName($params['act'])) : '';
 
 		$this->headers = getallheaders();
 
@@ -61,22 +61,7 @@ class Route implements RouteInterface
 
 	public function run()
 	{
-		$code = 0;
-		$msg = '';
-		$res = false;
-
-		if (!$code) {
-			try {
-				call_user_func(array($this->class, $this->method));
-			} catch (Exception $e) {
-				$code = $e->getCode();
-				$msg = $e->getMessage();
-			}
-
-			if ($code) {
-				echo $msg . PHP_EOL;
-			}
-		}
+		call_user_func(array($this->class, $this->method));
 	}
 
 	protected function prepare() {
@@ -91,7 +76,7 @@ class Route implements RouteInterface
 		$this->method = $this->act;
 
 		if (!method_exists($this->class, $this->method)) {
-			throw new Exception("The method ['{$method}'] is not found in class ['{$class}']");
+			throw new Exception("The act ['{$this->method}'] is not found");
 		}
 	}
 

@@ -11,11 +11,13 @@ class Kof
 {
 	function __construct()
 	{
-		echo 654;
+		// echo 654;
 	}
 
 	public function read() {
-		K::write();
+		// K::write();
+
+		return 321;
 	}
 }
 
