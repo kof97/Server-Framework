@@ -2,7 +2,7 @@
 
 namespace Framework\Resource;
 
-use \Exception;
+use Framework\Exception\FException;
 use Framework\Base\RouteInterface;
 
 /**
@@ -70,7 +70,7 @@ class Route implements RouteInterface
 		$class = 'resource\\' . $this->resource;
 
 		if (!class_exists($class)) {
-			throw new Exception('Module not exist');
+			throw new FException('MODULE_NOT_EXIST');
 		}
 
 		$this->class = new $class();
@@ -78,7 +78,7 @@ class Route implements RouteInterface
 		$this->method = $this->act;
 
 		if (!method_exists($this->class, $this->method)) {
-			throw new Exception('Act not exist');
+			throw new FException('ACT_NOT_EXIST');
 		}
 	}
 

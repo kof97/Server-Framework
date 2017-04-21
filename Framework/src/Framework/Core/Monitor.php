@@ -3,6 +3,7 @@
 namespace Framework\Core;
 
 use \Exception;
+use Framework\Exception\FException;
 use Framework\Base\RouteInterface;
 
 /**
@@ -39,9 +40,11 @@ class Monitor
 
 		try {
 			$data = $this->run();
-		} catch (Exception $e) {
+		} catch (FException $e) {
 			$code = $e->getCode();
 			$msg = $e->getMessage();
+		} catch (Exception $e) {
+
 		}
 
 		$this->display($code, $msg, $data);
@@ -63,17 +66,17 @@ class Monitor
 		return $response;
 	}
 
-	private function preRun()
+	protected function preRun()
 	{
 
 	}
 
-	private function afterRun()
+	protected function afterRun()
 	{
 
 	}
 
-	private function display($code = 0, $msg = '', $data = '')
+	protected function display($code = 0, $msg = '', $data = '')
 	{
 		$response = array(
 			'code' => $code,
