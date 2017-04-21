@@ -2,7 +2,7 @@
 
 namespace inc;
 
-use \Exception;
+use inc\exception\ApiException;
 use Framework\Resource\Route;
 
 /**

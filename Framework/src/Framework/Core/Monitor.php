@@ -3,6 +3,7 @@
 namespace Framework\Core;
 
 use \Exception;
+use inc\exception\ApiException;
 use Framework\Exception\FException;
 use Framework\Base\RouteInterface;
 
@@ -40,6 +41,8 @@ class Monitor
 		try {
 			$data = $this->run();
 		} catch (FException $e) {
+			$err = $e;
+		} catch (ApiException $e) {
 			$err = $e;
 		} catch (Exception $e) {
 			$err = $e;

@@ -3,6 +3,9 @@
 namespace resource;
 
 use model\K;
+use \Exception;
+use inc\exception\ApiException;
+use Framework\Exception\FException;
 
 /**
  *
@@ -16,6 +19,8 @@ class Kof
 
 	public function read() {
 		// K::write();
+		throw new ApiException('SYSTEM_ERROR');
+		
 
 		return 321;
 	}
