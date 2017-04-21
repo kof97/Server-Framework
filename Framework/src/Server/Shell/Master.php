@@ -103,7 +103,7 @@ class Master
 	protected function daemon()
 	{
 		if (is_file($this->masterPidFile)) {
-			echo "The file $this->masterPidFile exists" . PHP_EOL;
+			echo "The file {$this->masterPidFile} exists" . PHP_EOL;
 			echo 'It has already started ! !' . PHP_EOL;
 			exit;
 		}
@@ -172,7 +172,7 @@ class Master
 		exec("ps aux | grep run.php | awk '{print $2}'", $output);
 		if ($handle = opendir(self::RUN_TIME)) {
 			while (false !== ($file = readdir($handle))) {
-				if ($file != "." && $file != ".." && strpos($file, self::SERVER_NAME) === false) {
+				if ($file != '.' && $file != '..' && strpos($file, self::SERVER_NAME) === false) {
 					$point_pid = substr($file, strpos($file, '_') + 1);
 					$pid = substr($point_pid, 0, strlen($point_pid) - 4);
 
