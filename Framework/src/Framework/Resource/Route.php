@@ -70,7 +70,7 @@ class Route implements RouteInterface
 		$class = 'resource\\' . $this->resource;
 
 		if (!class_exists($class)) {
-			throw new Exception("The class ['{$class}'] is not exist");
+			throw new Exception('Module not exist');
 		}
 
 		$this->class = new $class();
@@ -78,7 +78,7 @@ class Route implements RouteInterface
 		$this->method = $this->act;
 
 		if (!method_exists($this->class, $this->method)) {
-			throw new Exception("The act ['{$this->method}'] is not found");
+			throw new Exception('Act not exist');
 		}
 	}
 
