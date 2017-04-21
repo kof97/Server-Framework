@@ -34,20 +34,18 @@ class Monitor
 	}
 
 	public function init() {
-		$code = 0;
-		$msg = '';
+		$err = null;
 		$data = '';
 
 		try {
 			$data = $this->run();
 		} catch (FException $e) {
-			$code = $e->getCode();
-			$msg = $e->getMessage();
+			$err = $e;
 		} catch (Exception $e) {
-
+			$err = $e;
 		}
 
-		$this->display($code, $msg, $data);
+		$this->display($err, $data);
 	}
 
 	protected function run()
@@ -76,11 +74,11 @@ class Monitor
 
 	}
 
-	protected function display($code = 0, $msg = '', $data = '')
+	protected function display($err = null, $data = '')
 	{
 		$response = array(
-			'code' => $code,
-			'msg'  => $msg,
+			'code' => ($err === null ? 0 : $err->getCode()),
+			'msg'  => ($err === null ? '' : $err->getMessage()),
 			'data' => $data
 		);
 
