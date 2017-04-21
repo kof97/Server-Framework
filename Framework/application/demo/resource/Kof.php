@@ -19,7 +19,7 @@ class Kof
 
 	public function read() {
 		// K::write();
-		throw new ApiException('SYSTEM_ERROR');
+		throw new Exception('SYSTEM_BUSY');
 		
 
 		return 321;

@@ -45,6 +45,7 @@ class Monitor
 		} catch (ApiException $e) {
 			$err = $e;
 		} catch (Exception $e) {
+			var_dump(333333333333333);
 			$err = $e;
 		}
 

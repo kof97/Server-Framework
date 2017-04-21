@@ -14,21 +14,15 @@ class Router extends Route
 {
 	public function run()
 	{
-		$code = 0;
-		$msg = '';
 		$res = false;
 
-		if (!$code) {
-			try {
-				$res = call_user_func(array($this->class, $this->method));
-			} catch (Exception $e) {
-				$code = $e->getCode();
-				$msg = $e->getMessage();
-			}
-
-			if ($code) {
-				echo $msg . PHP_EOL;
-			}
+		try {
+			var_dump(1111111111111);
+			$res = call_user_func(array($this->class, $this->method));
+		} catch (Exception $e) {
+			var_dump(2222222222);
+			$code = $e->getCode();
+			$msg = $e->getMessage();
 		}
 
 		return $res;
