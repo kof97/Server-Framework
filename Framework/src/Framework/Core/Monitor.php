@@ -45,7 +45,6 @@ class Monitor
 		} catch (ApiException $e) {
 			$err = $e;
 		} catch (Exception $e) {
-			var_dump(333333333333333);
 			$err = $e;
 		}
 
@@ -81,9 +80,9 @@ class Monitor
 	protected function display($err = null, $data = '')
 	{
 		$response = array(
-			'code' => ($err === null ? 0 : $err->getCode()),
-			'msg'  => ($err === null ? '' : $err->getMessage()),
-			'data' => $data
+			'code' => $err === null ? 0 : $err->getCode(),
+			'msg'  => $err === null ? '' : $err->getMessage(),
+			'data' => $data === null ? '' : $data
 		);
 
 		echo json_encode($response);

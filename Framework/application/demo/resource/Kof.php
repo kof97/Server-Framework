@@ -19,7 +19,7 @@ class Kof
 
 	public function read() {
 		// K::write();
-		throw new Exception('SYSTEM_BUSY');
+		throw new Exception('SYSTEM_BUSY', 404);
 		
 
 		return 321;
