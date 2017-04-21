@@ -14,9 +14,9 @@ class Master
 {
 	const SERVER_NAME = 'FrameServer';
 
-	const RUN_TIME = '../run/';
+	const RUN_TIME = ROOT . 'run/';
 
-	const CONF_PATH = '../conf/server.ini';
+	const CONF_PATH = ROOT . 'etc/conf.ini';
 
 	public static $socket = null;
 
