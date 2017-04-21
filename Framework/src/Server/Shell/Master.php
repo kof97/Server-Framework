@@ -247,7 +247,7 @@ class Master
 			$event_class = '\\Server\\Event\\' . ucfirst($this->getEventLoopName());
 
 			if (!$this->getEventLoopName()) {
-				exit('no extension');
+				exit('Not found the "event" extension');
 			}
 
 			$this->eventClassName = $event_class;
