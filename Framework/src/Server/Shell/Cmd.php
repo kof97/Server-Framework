@@ -31,6 +31,8 @@ class Cmd
 
 		is_dir($run) || File::makeDir($run);
 		is_dir($log) || File::makeDir($log);
+
+		echo 'Init successful' . PHP_EOL;
 	}
 }
 
