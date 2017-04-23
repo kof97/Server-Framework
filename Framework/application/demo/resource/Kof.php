@@ -14,7 +14,7 @@ class Kof
 {
 	function __construct()
 	{
-
+		//
 	}
 
 	public function read() {
