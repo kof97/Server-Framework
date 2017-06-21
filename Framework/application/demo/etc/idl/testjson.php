@@ -1,4 +1,6 @@
-{
+<?php
+
+$json = '{
 	"module": {
 		"name": "demo",
 		"description": "The demo",
@@ -36,4 +38,15 @@
 			}
 		}
 	}
-}
+}';
+
+$res = json_decode($json, true);
+
+
+var_dump($res);
+
+
+
+
+
+// end of script
