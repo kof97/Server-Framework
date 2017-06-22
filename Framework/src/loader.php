@@ -4,6 +4,7 @@
  * Class Loader.
  *
  * @category PHP
+ * @author   Arno <1048434786@qq.com>
  */
 class Loader
 {
@@ -39,6 +40,6 @@ class Loader
 	}
 }
 
-Loader::register(array('Framework', 'Server'), ROOT . 'src');
+Loader::register(array('Framework', 'Server', 'IDL'), ROOT . 'src');
 
 // end of script

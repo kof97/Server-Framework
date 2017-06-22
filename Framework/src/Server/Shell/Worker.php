@@ -9,6 +9,7 @@ use Server\Connection\TcpConnection;
  * Class Worker.
  *
  * @category PHP
+ * @author   Arno <1048434786@qq.com>
  */
 class Worker
 {

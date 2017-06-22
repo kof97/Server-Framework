@@ -9,6 +9,7 @@ use Server\Event\EventInterface;
  * Class Master.
  *
  * @category PHP
+ * @author   Arno <1048434786@qq.com>
  */
 class Master
 {

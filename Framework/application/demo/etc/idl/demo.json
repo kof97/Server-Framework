@@ -5,6 +5,7 @@
 		"types": {
 			"user_list": {
 				"description": "",
+				"type": "struct",
 				"element": {
 					"id": { "type": "integer", "require": "yes" },
 					"user_id": { "type": "user_id", "require": "yes" },

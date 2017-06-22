@@ -10,6 +10,7 @@ use Framework\Resource\Route;
  * Class Route.
  *
  * @category PHP
+ * @author   Arno <1048434786@qq.com>
  */
 class Router extends Route
 {

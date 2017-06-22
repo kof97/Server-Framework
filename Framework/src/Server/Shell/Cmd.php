@@ -9,6 +9,7 @@ use Framework\Common\File;
  * Class Cmd.
  *
  * @category PHP
+ * @author   Arno <1048434786@qq.com>
  */
 class Cmd
 {

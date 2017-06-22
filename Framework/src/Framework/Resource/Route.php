@@ -9,6 +9,7 @@ use Framework\Base\RouteInterface;
  * Class Route.
  *
  * @category PHP
+ * @author   Arno <1048434786@qq.com>
  */
 class Route implements RouteInterface
 {
