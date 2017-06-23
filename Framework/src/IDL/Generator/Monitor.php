@@ -68,17 +68,41 @@ class Monitor
 			$response = $interface_info['response'];
 
 			foreach ($request as $name => $info) {
-				$this->getElementInfo($name, $info);
+				$this->getElementInfo($name, $info, $module_info, $interface_info);
 			}
 
 			foreach ($response as $name => $info) {
-				$this->getElementInfo($name, $info);
+				$this->getElementInfo($name, $info, $module_info, $interface_info);
 			}
 		}
 	}
 
-	protected function getElementInfo($name, $info) {
-		var_dump($name, $info);
+	protected function getElementInfo($name, $info, $module_info, $interface_info) {
+		self::$trace['param'] = $name;
+
+		$res = array();
+
+		$res['name'] = $name;
+		isset($info['require']) && $res['require'] = $info['require'];
+
+		$extend_type = $info['type'];
+
+		$param_info = $this->getTypes($extend_type, $module_info, $interface_info);
+
+
+		// var_dump($name, $info);
+	}
+
+	protected function getTypes($name, $module_info = array(), $interface_info = array()) {
+		isset($types) || isset($interface_info['types'][$name]) && $types = $interface_info['types'][$name];
+		isset($types) || isset($module_info['types'][$name]) && $types = $module_info['types'][$name];
+		isset($types) || isset($this->application['application']['types'][$name]) && $types = $this->application['application']['types'][$name];
+
+		$this->processElement($name, $types);
+	}
+
+	protected function processElement($name, $types) {
+		
 	}
 
 	/**
