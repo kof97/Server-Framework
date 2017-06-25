@@ -138,7 +138,26 @@ class Monitor
 	}
 
 	protected function processInt($name, $info, $type = '') {
+		$res = array();
 
+		$min = 0;
+
+		switch ($type) {
+			case '32':
+				$max = 4294967295;
+				break;
+
+			case '64':
+
+			default:
+				$max = 9223372036854775807;
+				break;
+		}
+
+		$res['validate']['Integer']['checkMin'][] = isset($info['validate']['min']) ? max($info['validate']['min'], $min) : $min;
+		$res['validate']['Integer']['checkMax'][] = isset($info['validate']['max']) ? min($info['validate']['max'], $max) : $max;
+var_dump($info);
+		return $res;
 	}
 
 	protected function processString($name, $info) {
@@ -156,7 +175,7 @@ class Monitor
 			self::$trace['sub_param'] = $key;
 
 			$param = $this->getElementInfo($name, $value);
-			var_dump($param);
+			// var_dump($param);
 		}
 
 		// var_dump($res);
