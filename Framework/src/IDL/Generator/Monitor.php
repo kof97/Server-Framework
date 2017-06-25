@@ -54,7 +54,8 @@ class Monitor
 
 	function __construct($conf) {
 		(isset($conf['idl']) && is_dir($conf['idl'])) || die('"idl" in config is not set or not exist');
-		(isset($conf['idl_config']) && is_dir($conf['idl_config'])) || die('"idl config dir" in config is not set or not exist');
+		isset($conf['idl_config']) || die('"idl config dir" in config is not set or not exist');
+		is_dir($conf['idl_config']) || mkdir($conf['idl_config']);
 
 		$this->idlOutput = $conf['idl_config'];
 		$this->prepare($conf['idl']);
@@ -69,6 +70,9 @@ class Monitor
 		$this->getModuleInfo();
 	}
 
+	/**
+	 * read module.
+	 */
 	protected function getModuleInfo() {
 		foreach ($this->module as $module_name => $module_info) {
 			self::$trace['mod'] = $module_name;
@@ -78,6 +82,9 @@ class Monitor
 		}
 	}
 
+	/**
+	 * read interface.
+	 */
 	protected function getInterfaceInfo() {
 		foreach ($this->moduleInfo['interface'] as $interface_name => $interface_info) {
 			self::$trace['act'] = $interface_name;
@@ -104,12 +111,24 @@ class Monitor
 		}
 	}
 
+	/**
+	 * write to file.
+	 *
+	 * @param array $data
+	 */
 	protected function write($data) {
 		$file = $this->idlOutput . DIRECTORY_SEPARATOR . str_replace('_', '', self::$trace['mod']) . '_' . str_replace('_', '', self::$trace['act']) . '.php';
 
 		file_put_contents($file, '<?php' . PHP_EOL . var_export($data, true));
 	}
 
+	/**
+	 * read element info.
+	 *
+	 * @param string $name
+	 * @param array  $info
+	 *
+	 */
 	protected function getElementInfo($name, $info) {
 		self::$trace['param'] = $name;
 
@@ -148,6 +167,13 @@ class Monitor
 		return Common::sort($param_info);
 	}
 
+	/**
+	 * find the origin types.
+	 *
+	 * @param string $name
+	 *
+	 * @param array
+	 */
 	protected function getTypes($name) {
 		isset($types) || isset($this->interfaceInfo['types'][$name]) && $types = $this->interfaceInfo['types'][$name];
 		isset($types) || isset($this->moduleInfo['types'][$name]) && $types = $this->moduleInfo['types'][$name];
@@ -162,6 +188,15 @@ class Monitor
 
 	}
 
+	/**
+	 * process int info.
+	 *
+	 * @param string $name
+	 * @param array  $info
+	 * @param string $type
+	 *
+	 * @return array
+	 */
 	protected function processInt($name, $info, $type = '') {
 		$res = array();
 
@@ -185,6 +220,14 @@ class Monitor
 		return $res;
 	}
 
+	/**
+	 * process string info.
+	 *
+	 * @param string $name
+	 * @param array  $info
+	 *
+	 * @return array
+	 */
 	protected function processString($name, $info) {
 		$res = array();
 
@@ -209,6 +252,14 @@ class Monitor
 		var_dump($info);
 	}
 
+	/**
+	 * process struct info.
+	 *
+	 * @param string $name
+	 * @param array  $info
+	 *
+	 * @return array
+	 */
 	protected function processStruct($name, $info) {
 		$res = array();
 
