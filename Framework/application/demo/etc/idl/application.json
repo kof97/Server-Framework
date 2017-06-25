@@ -6,7 +6,7 @@
 		"types": {
 			"user_id": {
 				"description": "",
-				"extends": "integer",
+				"type": "integer",
 				"validate": {
 					"min": 0,
 					"max": 4294967295
@@ -14,7 +14,7 @@
 			},
 			"user_name": {
 				"description": "",
-				"extends": "string",
+				"type": "string",
 				"validate": {
 					"min_length": 0,
 					"max_length": 255

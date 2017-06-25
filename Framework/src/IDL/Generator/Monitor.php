@@ -14,17 +14,27 @@ class Monitor
 	/**
 	 * @var array application config.
 	 */
-	protected $application;
+	protected $application = array();
 
 	/**
 	 * @var array module config.
 	 */
-	protected $module;
+	protected $module = array();
 
 	/**
 	 * @var array enum config.
 	 */
-	protected $enum;
+	protected $enum = array();
+
+	/**
+	 * @var array The current module.
+	 */
+	protected $moduleInfo = array();
+
+	/**
+	 * @var array The current interface.
+	 */
+	protected $interfaceInfo = array();
 
 	/**
 	 * @var array trace info.
@@ -54,55 +64,102 @@ class Monitor
 	protected function getModuleInfo() {
 		foreach ($this->module as $module_name => $module_info) {
 			self::$trace['mod'] = $module_name;
+			$this->moduleInfo = $module_info;
 
-			$this->getInterfaceInfo($module_info);
+			$this->getInterfaceInfo();
 		}
 	}
 
-	protected function getInterfaceInfo($module_info) {
-		foreach ($module_info['interface'] as $interface_name => $interface_info) {
+	protected function getInterfaceInfo() {
+		foreach ($this->moduleInfo['interface'] as $interface_name => $interface_info) {
 			self::$trace['act'] = $interface_name;
+			$this->interfaceInfo = $interface_info;
 
 			$method = $interface_info['method'];
 			$request = $interface_info['request'];
 			$response = $interface_info['response'];
 
 			foreach ($request as $name => $info) {
-				$this->getElementInfo($name, $info, $module_info, $interface_info);
+				$this->getElementInfo($name, $info);
 			}
 
 			foreach ($response as $name => $info) {
-				$this->getElementInfo($name, $info, $module_info, $interface_info);
+				$this->getElementInfo($name, $info);
 			}
 		}
 	}
 
-	protected function getElementInfo($name, $info, $module_info, $interface_info) {
+	protected function getElementInfo($name, $info) {
 		self::$trace['param'] = $name;
 
-		$res = array();
+		switch ($info['type']) {
+			case 'integer':
+				$param_info = $this->processInt($name, $info);
+				break;
 
-		$res['name'] = $name;
-		isset($info['require']) && $res['require'] = $info['require'];
+			case 'int32':
+				$param_info = $this->processInt($name, $info, '32');
+				break;
 
-		$extend_type = $info['type'];
+			case 'int64':
+				$param_info = $this->processInt($name, $info, '64');
+				break;
 
-		$param_info = $this->getTypes($extend_type, $module_info, $interface_info);
+			case 'string':
+				$param_info = $this->processString($name, $info);
+				break;
 
+			case 'array':
+				$param_info = $this->processArray($name, $info);
+				break;
 
-		// var_dump($name, $info);
+			case 'struct':
+				$param_info = $this->processStruct($name, $info);
+				break;
+
+			default:
+				$param_info = $this->getTypes($info['type']);
+				break;
+		}
+
+		return $param_info;
 	}
 
-	protected function getTypes($name, $module_info = array(), $interface_info = array()) {
-		isset($types) || isset($interface_info['types'][$name]) && $types = $interface_info['types'][$name];
-		isset($types) || isset($module_info['types'][$name]) && $types = $module_info['types'][$name];
+	protected function getTypes($name) {
+		isset($types) || isset($this->interfaceInfo['types'][$name]) && $types = $this->interfaceInfo['types'][$name];
+		isset($types) || isset($this->moduleInfo['types'][$name]) && $types = $this->moduleInfo['types'][$name];
 		isset($types) || isset($this->application['application']['types'][$name]) && $types = $this->application['application']['types'][$name];
 
-		$this->processElement($name, $types);
+		$this->getElementInfo($name, $types);
 	}
 
 	protected function processElement($name, $types) {
-		
+
+	}
+
+	protected function processInt($name, $info, $type = '') {
+
+	}
+
+	protected function processString($name, $info) {
+
+	}
+
+	protected function processArray($name, $info) {
+
+	}
+
+	protected function processStruct($name, $info) {
+		$res = array();
+
+		foreach ($info['element'] as $key => $value) {
+			self::$trace['sub_param'] = $key;
+
+			$param = $this->getElementInfo($name, $value);
+			var_dump($param);
+		}
+
+		// var_dump($res);
 	}
 
 	/**
