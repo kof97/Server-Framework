@@ -2,6 +2,8 @@
 
 namespace IDL\Generator;
 
+use IDL\Generator\Common;
+
 /**
  * Class idl Generator.
  *
@@ -80,7 +82,8 @@ class Monitor
 			$response = $interface_info['response'];
 
 			foreach ($request as $name => $info) {
-				$this->getElementInfo($name, $info);
+				$element_info = Common::sort($this->getElementInfo($name, $info));
+				var_dump($element_info);
 			}
 
 			foreach ($response as $name => $info) {
@@ -122,6 +125,8 @@ class Monitor
 				break;
 		}
 
+		$param_info['name'] = $name;
+
 		return $param_info;
 	}
 
@@ -130,7 +135,9 @@ class Monitor
 		isset($types) || isset($this->moduleInfo['types'][$name]) && $types = $this->moduleInfo['types'][$name];
 		isset($types) || isset($this->application['application']['types'][$name]) && $types = $this->application['application']['types'][$name];
 
-		$this->getElementInfo($name, $types);
+		$res = $this->getElementInfo($name, $types);
+
+		return $res;
 	}
 
 	protected function processElement($name, $types) {
@@ -141,7 +148,6 @@ class Monitor
 		$res = array();
 
 		$min = 0;
-
 		switch ($type) {
 			case '32':
 				$max = 4294967295;
@@ -156,12 +162,22 @@ class Monitor
 
 		$res['validate']['Integer']['checkMin'][] = isset($info['validate']['min']) ? max($info['validate']['min'], $min) : $min;
 		$res['validate']['Integer']['checkMax'][] = isset($info['validate']['max']) ? min($info['validate']['max'], $max) : $max;
-var_dump($info);
+		$res['type'] = $info['type'];
+
 		return $res;
 	}
 
 	protected function processString($name, $info) {
+		$res = array();
 
+		$min_length = 0;
+		$max_length = 255;
+
+		$res['validate']['Enum']['checkMinLength'][] = isset($info['validate']['min_length']) ? max($info['validate']['min_length'], $min_length) : $min_length;
+		$res['validate']['Enum']['checkMaxLength'][] = isset($info['validate']['max_length']) ? $info['validate']['max_length'] : $max_length;
+		$res['type'] = $info['type'];
+
+		return $res;
 	}
 
 	protected function processArray($name, $info) {
