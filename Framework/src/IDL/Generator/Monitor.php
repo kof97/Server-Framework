@@ -12,6 +12,10 @@ use IDL\Generator\Common;
  */
 class Monitor
 {
+	/**
+	 * @var string idl config dir.
+	 */
+	protected $idlOutput;
 
 	/**
 	 * @var array application config.
@@ -50,7 +54,9 @@ class Monitor
 
 	function __construct($conf) {
 		(isset($conf['idl']) && is_dir($conf['idl'])) || die('"idl" in config is not set or not exist');
+		(isset($conf['idl_config']) && is_dir($conf['idl_config'])) || die('"idl config dir" in config is not set or not exist');
 
+		$this->idlOutput = $conf['idl_config'];
 		$this->prepare($conf['idl']);
 
 		$this->run();
@@ -77,19 +83,31 @@ class Monitor
 			self::$trace['act'] = $interface_name;
 			$this->interfaceInfo = $interface_info;
 
-			$method = $interface_info['method'];
 			$request = $interface_info['request'];
 			$response = $interface_info['response'];
 
+			$content['name'] = $interface_name;
+			$content['method'] = $interface_info['method'];
+
 			foreach ($request as $name => $info) {
-				$element_info = Common::sort($this->getElementInfo($name, $info));
-				var_dump($element_info);
+				$request_info[$name] = $this->getElementInfo($name, $info);
 			}
 
 			foreach ($response as $name => $info) {
-				$this->getElementInfo($name, $info);
+				$response_info[$name] = $this->getElementInfo($name, $info);
 			}
+
+			$content['request'] = $request_info;
+			$content['response'] = $response_info;
+
+			$this->write($content);
 		}
+	}
+
+	protected function write($data) {
+		$file = $this->idlOutput . DIRECTORY_SEPARATOR . str_replace('_', '', self::$trace['mod']) . '_' . str_replace('_', '', self::$trace['act']) . '.php';
+
+		file_put_contents($file, '<?php' . PHP_EOL . var_export($data, true));
 	}
 
 	protected function getElementInfo($name, $info) {
@@ -127,7 +145,7 @@ class Monitor
 
 		$param_info['name'] = $name;
 
-		return $param_info;
+		return Common::sort($param_info);
 	}
 
 	protected function getTypes($name) {
@@ -162,7 +180,7 @@ class Monitor
 
 		$res['validate']['Integer']['checkMin'][] = isset($info['validate']['min']) ? max($info['validate']['min'], $min) : $min;
 		$res['validate']['Integer']['checkMax'][] = isset($info['validate']['max']) ? min($info['validate']['max'], $max) : $max;
-		$res['type'] = $info['type'];
+		$res['type'] = 'integer';
 
 		return $res;
 	}
@@ -173,28 +191,39 @@ class Monitor
 		$min_length = 0;
 		$max_length = 255;
 
-		$res['validate']['Enum']['checkMinLength'][] = isset($info['validate']['min_length']) ? max($info['validate']['min_length'], $min_length) : $min_length;
-		$res['validate']['Enum']['checkMaxLength'][] = isset($info['validate']['max_length']) ? $info['validate']['max_length'] : $max_length;
-		$res['type'] = $info['type'];
+		$res['validate']['String']['checkMinLength'][] = isset($info['validate']['min_length']) ? max($info['validate']['min_length'], $min_length) : $min_length;
+		$res['validate']['String']['checkMaxLength'][] = isset($info['validate']['max_length']) ? $info['validate']['max_length'] : $max_length;
+
+		isset($info['validate']['pattern']) && $res['validate']['String']['checkRegex'][] = $info['validate']['pattern'];
+
+		$res['type'] = 'string';
 
 		return $res;
 	}
 
-	protected function processArray($name, $info) {
+	protected function processEnum($name, $info) {
 
+	}
+
+	protected function processArray($name, $info) {
+		var_dump($info);
 	}
 
 	protected function processStruct($name, $info) {
 		$res = array();
 
+		$param = array();
 		foreach ($info['element'] as $key => $value) {
 			self::$trace['sub_param'] = $key;
 
-			$param = $this->getElementInfo($name, $value);
-			// var_dump($param);
+			$param[$key] = $this->getElementInfo($key, $value);
 		}
 
-		// var_dump($res);
+		$res['name'] = $name;
+		$res['type'] = 'struct';
+		$res['element'] = $param;
+
+		return $res;
 	}
 
 	/**

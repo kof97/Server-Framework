@@ -4,3 +4,5 @@ Framework/restful.lock
 
 Framework/log/
 Framework/run/
+
+Framework/application/demo/inc/IDL/*
