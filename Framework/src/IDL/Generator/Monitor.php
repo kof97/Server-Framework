@@ -250,8 +250,30 @@ class Monitor
 		return $res;
 	}
 
+	/**
+	 * process enum type.
+	 *
+	 * @param string $name
+	 * @param array  $info
+	 *
+	 * @return array
+	 */
 	protected function processEnum($name, $info) {
-		var_dump($name, $info);
+		$res = array();
+
+		$enum_all = $this->getEnumByName($info['validate']['source']);
+		if (array_intersect($info['validate']['list'], $enum_all) != $info['validate']['list']) {
+			die('Enum must be in source');
+		} else if (empty($info['validate']['list'])) {
+			$enum = $enum_all;
+		} else {
+			$enum = $info['validate']['list'];
+		}
+
+		$res['validate']['Enum']['checkEnum'][] = $enum;
+		$res['validate']['Enum']['checkEnum'][] = $info['validate']['source'];
+
+		return $res;
 	}
 
 	protected function processArray($name, $info) {
@@ -291,7 +313,7 @@ class Monitor
 	 * @return array
 	 */
 	protected function getEnumByName($name) {
-		var_dump($name, $this->enum);
+		return $this->enum['enumeration'][$name];
 	}
 
 	/**

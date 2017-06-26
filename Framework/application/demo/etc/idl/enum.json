@@ -2,7 +2,10 @@
 	"enumeration": {
 		"reader_type_enum": [
 			"ADSF",
-			"ISOWER"
+			"ISOWER",
+			"665",
+			"ISO465456WER",
+			"AAAAA"
 		]
 	}
 }
