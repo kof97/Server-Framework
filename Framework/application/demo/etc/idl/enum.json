@@ -1,8 +1,8 @@
 {
 	"enumeration": {
-		"": [
-			"",
-			""
+		"reader_type_enum": [
+			"ADSF",
+			"ISOWER"
 		]
 	}
 }

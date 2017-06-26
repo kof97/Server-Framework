@@ -149,6 +149,10 @@ class Monitor
 				$param_info = $this->processString($name, $info);
 				break;
 
+			case 'enum':
+				$param_info = $this->processEnum($name, $info);
+				break;
+
 			case 'array':
 				$param_info = $this->processArray($name, $info);
 				break;
@@ -247,7 +251,7 @@ class Monitor
 	}
 
 	protected function processEnum($name, $info) {
-
+		var_dump($name, $info);
 	}
 
 	protected function processArray($name, $info) {
@@ -277,6 +281,17 @@ class Monitor
 		$res['element'] = $param;
 
 		return $res;
+	}
+
+	/**
+	 * get enum.
+	 *
+	 * @param string $name
+	 *
+	 * @return array
+	 */
+	protected function getEnumByName($name) {
+		var_dump($name, $this->enum);
 	}
 
 	/**

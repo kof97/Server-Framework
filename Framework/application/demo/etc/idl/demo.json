@@ -17,9 +17,20 @@
 			"read": {
 				"description": "",
 				"method": "GET",
+				"types": {
+					"reader_type": {
+						"description": "",
+						"type": "enum",
+						"validate": {
+							"list": [],
+							"source": "reader_type_enum"
+						}
+					}
+				},
 				"request": {
 					"id": { "type": "user_id", "require": "yes" },
-					"name": { "type": "user_name", "require": "yes" }
+					"name": { "type": "user_name", "require": "yes" },
+					"type": { "type": "reader_type", "require": "yes" }
 				},
 				"response": {
 					"list": { "type": "user_list" }
