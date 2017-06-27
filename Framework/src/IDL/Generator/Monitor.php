@@ -290,6 +290,7 @@ class Monitor
 	 * @return array
 	 */
 	protected function processStruct($name, $info) {
+		self::$trace['param'] = $name;
 		$res = array();
 
 		$param = array();
