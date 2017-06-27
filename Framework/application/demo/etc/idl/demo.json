@@ -4,7 +4,7 @@
 		"description": "The demo",
 		"types": {
 			"user_list": {
-				"description": "",
+				"description": "11111111111",
 				"type": "struct",
 				"element": {
 					"id": { "type": "integer", "require": "yes" },
@@ -19,7 +19,7 @@
 				"method": "GET",
 				"types": {
 					"reader_type": {
-						"description": "",
+						"description": "32123123",
 						"type": "enum",
 						"validate": {
 							"list": [],
@@ -33,7 +33,7 @@
 					"type": { "type": "reader_type", "require": "yes" }
 				},
 				"response": {
-					"list": { "type": "user_list" }
+					"list": { "type": "user_list", "description": "asdf" }
 				}
 			},
 			"create": {

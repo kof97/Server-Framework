@@ -167,6 +167,7 @@ class Monitor
 		}
 
 		$param_info['name'] = $name;
+		isset($info['description']) && $param_info['description'] = $info['description'];
 
 		return Common::sort($param_info);
 	}
