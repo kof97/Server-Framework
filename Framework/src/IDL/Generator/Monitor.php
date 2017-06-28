@@ -191,6 +191,14 @@ class Monitor
 		return $res;
 	}
 
+	/**
+	 * process element.
+	 *
+	 * @param string $name
+	 * @param array  $types
+	 *
+	 * @param array
+	 */
 	protected function processElement($name, $types) {
 
 	}
