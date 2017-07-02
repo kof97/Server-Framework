@@ -286,7 +286,14 @@ class Monitor
 	}
 
 	protected function processArray($name, $info) {
-		var_dump($info);
+		$res = array();
+
+
+		if (isset($info['repeated'])) {
+			
+		}
+
+		return $res;
 	}
 
 	/**

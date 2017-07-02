@@ -5,6 +5,16 @@
 		"types": {
 			"user_list": {
 				"description": "11111111111",
+				"type": "array",
+				"repeated": {
+					"type": "user_list_struct",
+					"validate": {
+
+					}
+				}
+			},
+			"user_list_struct": {
+				"description": "11111111111",
 				"type": "struct",
 				"element": {
 					"id": { "type": "integer", "require": "yes" },
