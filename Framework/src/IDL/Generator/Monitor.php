@@ -163,10 +163,11 @@ class Monitor
 
 			default:
 				$param_info = $this->getTypes($info['type']);
+				$param_info['name'] = $info['type'];
 				break;
 		}
 
-		$param_info['name'] = $name;
+		!isset($param_info['name']) && $param_info['name'] = $name;
 		isset($info['description']) && $param_info['description'] = $info['description'];
 
 		return Common::sort($param_info);
@@ -288,10 +289,11 @@ class Monitor
 	protected function processArray($name, $info) {
 		$res = array();
 
-
 		if (isset($info['repeated'])) {
-			
+			$res['repeated'] = $this->getElementInfo($name, $info['repeated']);
 		}
+
+		$res['type'] = 'array';
 
 		return $res;
 	}

@@ -19,6 +19,7 @@ class Common
 		$res = array();
 
 		isset($data['name']) && $res['name'] = $data['name'];
+		isset($data['extends']) && $res['extends'] = $data['extends'];
 		isset($data['type']) && $res['type'] = $data['type'];
 		isset($data['require']) && $res['require'] = $data['require'];
 		isset($data['description']) && $res['description'] = $data['description'];
