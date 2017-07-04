@@ -181,6 +181,7 @@ class Monitor
 	 * @param array
 	 */
 	protected function getTypes($name) {
+
 		// todo 引用逻辑
 
 		isset($types) || isset($this->interfaceInfo['types'][$name]) && $types = $this->interfaceInfo['types'][$name];
