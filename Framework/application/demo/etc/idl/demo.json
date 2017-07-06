@@ -3,6 +3,10 @@
 		"name": "demo",
 		"description": "The demo",
 		"types": {
+			"user_list_ttt": {
+				"description": "ttttttt",
+				"type": "user_list"
+			},
 			"user_list": {
 				"description": "11111111111",
 				"type": "array",
@@ -43,7 +47,7 @@
 					"type": { "type": "reader_type", "require": "yes" }
 				},
 				"response": {
-					"list": { "type": "user_list", "description": "asdf" }
+					"list": { "type": "user_list_ttt", "description": "asdf" }
 				}
 			},
 			"create": {

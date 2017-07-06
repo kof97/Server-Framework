@@ -117,7 +117,7 @@ class Monitor
 	 * @param array $data
 	 */
 	protected function write($data) {
-		$file = $this->idlOutput . DIRECTORY_SEPARATOR . str_replace('_', '', self::$trace['mod']) . '_' . str_replace('_', '', self::$trace['act']) . '.php';
+		$file = $this->idlOutput . DIRECTORY_SEPARATOR . strtolower(str_replace('_', '', self::$trace['mod']) . '_' . str_replace('_', '', self::$trace['act'])) . '.php';
 
 		file_put_contents($file, '<?php' . PHP_EOL . var_export($data, true));
 	}
