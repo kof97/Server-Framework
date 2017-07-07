@@ -3,12 +3,12 @@
 namespace IDL\Validator;
 
 /**
- * Class idl base validator.
+ * Class string validator.
  *
  * @category PHP
  * @author   Arno <1048434786@qq.com>
  */
-class BaseValidator
+class String
 {
 
 
