@@ -13,3 +13,4 @@ $config = array(
 new IDL\Generator\Monitor($config);
 
 // end of script
+
