@@ -16,7 +16,6 @@ class Enum
 
 
 
-
 }
 
 // end of script
