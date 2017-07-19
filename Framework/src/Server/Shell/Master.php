@@ -43,7 +43,7 @@ class Master
 	);
 
 	protected $eventLoops = array(
-		'libevent'
+		'libevent',
 	);
 
 	protected $eventClassName = null;
