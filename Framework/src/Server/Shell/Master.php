@@ -155,6 +155,7 @@ class Master
 	{
 		if ($this->isMaster === false) {
 			// todo, something wrong
+
 			return;
 		}
 
