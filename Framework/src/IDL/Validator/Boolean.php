@@ -16,7 +16,6 @@ class Boolean
 
 
 
-
 }
 
 // end of script
