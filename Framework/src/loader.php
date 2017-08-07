@@ -40,6 +40,8 @@ class Loader
 	}
 }
 
+defined('ROOT') || define('ROOT', dirname(__dir__) . DIRECTORY_SEPARATOR);
+
 Loader::register(array('Framework', 'Server', 'IDL'), ROOT . 'src');
 
 // end of script

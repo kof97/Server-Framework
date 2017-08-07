@@ -1,10 +1,10 @@
 <?php
 
-require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
+require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'loader.php';
 
-use Framework\Coroutine\Scheduler;
-use Framework\Coroutine\SystemCall;
-use Framework\Coroutine\Task;
+use Server\Coroutine\Scheduler;
+use Server\Coroutine\SystemCall;
+use Server\Coroutine\Task;
 
 function getTaskId() {
 	return new SystemCall(
