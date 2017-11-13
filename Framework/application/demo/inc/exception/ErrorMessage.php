@@ -2,9 +2,12 @@
 
 namespace inc\exception;
 
-class ErrorMessage
+class ErrorCode
 {
-	const SYSTEM_BUSY = 'System busy';
+	const SYSTEM_ERROR = param invalid;
+
+    const PARAM_INVALID = Param invalid;
+
 }
 
 // end of script

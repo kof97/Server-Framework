@@ -8,6 +8,7 @@ $app = 'demo';
 $config = array(
 	'idl' => ROOT . '/application/' . $app . '/etc/idl',
 	'idl_config' => ROOT . '/application/' . $app . '/inc/IDL',
+	'error_dictionary' => ROOT . '/application/' . $app . '/inc/exception',
 );
 
 new IDL\Generator\Monitor($config);

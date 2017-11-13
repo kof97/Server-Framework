@@ -29,6 +29,10 @@ class Common
 
 		return $res;
 	}
+
+	public static function write($file, $content) {
+		file_put_contents($file, $content);
+	}
 }
 
 // end of script

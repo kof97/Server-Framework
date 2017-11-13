@@ -1,10 +1,9 @@
 {
-	"error": [
-		{"const": "PARAM_INVALID", "code": 10000, "message": "param invalid"},
-		{"const": "PARAM_INVALID", "code": 10000, "message": "param invalid"}
-	],
+	"memo": "10000 - 系统级错误",
+	"memo": "20000 - 通用错误",
+	"memo": "30000 - ",
 	"error": {
-		"PARAM_INVALID": {"code": 10000, "message": "param invalid"},
-		"PARAM_INVALID": {"code": 10000, "message": "param invalid"}
+		"SYSTEM_ERROR": {"code": 10000, "message": "param invalid"},
+		"PARAM_INVALID": {"code": 20000, "message": "Param invalid"}
 	}
 }

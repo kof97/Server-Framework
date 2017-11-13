@@ -3,6 +3,7 @@
 namespace IDL\Generator;
 
 use IDL\Generator\Common;
+use IDL\Generator\ErrorDictionary;
 
 /**
  * Class idl Generator.
@@ -13,9 +14,14 @@ use IDL\Generator\Common;
 class Monitor
 {
 	/**
-	 * @var string idl config dir.
+	 * @var string config.
 	 */
-	protected $idlOutput;
+	protected $config;
+
+	/**
+	 * @var array error config.
+	 */
+	protected $error = array();
 
 	/**
 	 * @var array application config.
@@ -57,8 +63,9 @@ class Monitor
 		isset($conf['idl_config']) || die('"idl config dir" in config is not set or not exist');
 		is_dir($conf['idl_config']) || mkdir($conf['idl_config']);
 
-		$this->idlOutput = $conf['idl_config'];
-		$this->prepare($conf['idl']);
+		$this->config = $conf;
+
+		$this->prepare();
 
 		$this->run();
 	}
@@ -117,9 +124,9 @@ class Monitor
 	 * @param array $data
 	 */
 	protected function write($data) {
-		$file = $this->idlOutput . DIRECTORY_SEPARATOR . strtolower(str_replace('_', '', self::$trace['mod']) . '_' . str_replace('_', '', self::$trace['act'])) . '.php';
+		$file = $this->config['idl_config'] . DIRECTORY_SEPARATOR . strtolower(str_replace('_', '', self::$trace['mod']) . '_' . str_replace('_', '', self::$trace['act'])) . '.php';
 
-		file_put_contents($file, '<?php' . PHP_EOL . var_export($data, true));
+		Common::write($file, '<?php' . PHP_EOL . var_export($data, true));
 	}
 
 	/**
@@ -338,21 +345,32 @@ class Monitor
 	/**
 	 * prepare.
 	 *
-	 * @param string $idl_dir
 	 */
-	protected function prepare($idl_dir) {
-		$this->prepareApplication($idl_dir);
-		$this->prepareEnum($idl_dir);
-		$this->prepareModule($idl_dir);
+	protected function prepare() {
+		$this->processErrorMsg();
+		$this->prepareApplication();
+		$this->prepareEnum();
+		$this->prepareModule();
+	}
+
+	/**
+	 * process error dictionary
+	 *
+	 */
+	protected function processErrorMsg() {
+		$file = $this->config['idl'] . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'error.json';
+		is_file($file) || die('Not found the "error.json"');
+		$error_set = json_decode(file_get_contents($file), true);
+
+		ErrorDictionary::write($error_set, $this->config['error_dictionary']);
 	}
 
 	/**
 	 * prepare application.
 	 *
-	 * @param string $idl_dir
 	 */
-	protected function prepareApplication($idl_dir) {
-		$file = $idl_dir . DIRECTORY_SEPARATOR . 'application.json';
+	protected function prepareApplication() {
+		$file = $this->config['idl'] . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'application.json';
 		is_file($file) || die('Not found the "application.json"');
 		$this->application = json_decode(file_get_contents($file), true);
 	}
@@ -360,10 +378,9 @@ class Monitor
 	/**
 	 * prepare enum.
 	 *
-	 * @param string $idl_dir
 	 */
-	protected function prepareEnum($idl_dir) {
-		$file = $idl_dir . DIRECTORY_SEPARATOR . 'enum.json';
+	protected function prepareEnum() {
+		$file = $this->config['idl'] . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'enum.json';
 		is_file($file) || die('Not found the "enum.json"');
 		$this->enum = json_decode(file_get_contents($file), true);
 	}
@@ -371,16 +388,11 @@ class Monitor
 	/**
 	 * prepare module info.
 	 *
-	 * @param string $idl_dir
 	 */
-	protected function prepareModule($idl_dir) {
-		$file_list = glob($idl_dir . DIRECTORY_SEPARATOR . '*.json');
+	protected function prepareModule() {
+		$file_list = glob($this->config['idl'] . DIRECTORY_SEPARATOR . '*.json');
 
 		foreach ($file_list as $file) {
-			if (strpos($file, 'application.json') !== false || strpos($file, 'enum.json') !== false) {
-				continue;
-			}
-
 			$module = json_decode(file_get_contents($file), true);
 
 			$this->module[$module['module']['name']] = $module['module'];
