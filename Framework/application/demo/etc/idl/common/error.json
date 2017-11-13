@@ -1,0 +1,10 @@
+{
+	"error": [
+		{"const": "PARAM_INVALID", "code": 10000, "message": "param invalid"},
+		{"const": "PARAM_INVALID", "code": 10000, "message": "param invalid"}
+	],
+	"error": {
+		"PARAM_INVALID": {"code": 10000, "message": "param invalid"},
+		"PARAM_INVALID": {"code": 10000, "message": "param invalid"}
+	}
+}
