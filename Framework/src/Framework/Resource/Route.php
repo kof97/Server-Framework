@@ -67,7 +67,8 @@ class Route implements RouteInterface
 		return $res;
 	}
 
-	protected function prepare() {
+	protected function prepare()
+	{
 		$class = 'resource\\' . $this->resource;
 
 		if (!class_exists($class)) {

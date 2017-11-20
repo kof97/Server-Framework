@@ -7,7 +7,8 @@ namespace model;
  */
 class K
 {
-	public static function write() {
+	public static function write()
+	{
 		var_dump('kof97');
 	}
 }

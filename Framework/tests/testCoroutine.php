@@ -6,7 +6,8 @@ use Server\Coroutine\Scheduler;
 use Server\Coroutine\SystemCall;
 use Server\Coroutine\Task;
 
-function getTaskId() {
+function getTaskId()
+{
 	return new SystemCall(
 		function(Task $task, Scheduler $scheduler) {
 			$task->setSendValue($task->getTaskId());
@@ -15,7 +16,8 @@ function getTaskId() {
 	);
 }
 
-function newTask(Generator $coroutine) {
+function newTask(Generator $coroutine)
+{
 	return new SystemCall(
 		function(Task $task, Scheduler $scheduler) use ($coroutine) {
 			$task->setSendValue($scheduler->newTask($coroutine));
@@ -24,7 +26,8 @@ function newTask(Generator $coroutine) {
 	);
 }
 
-function killTask($tid) {
+function killTask($tid)
+{
 	return new SystemCall(
 		function(Task $task, Scheduler $scheduler) use ($tid) {
 			if ($scheduler->killTask($tid)) {
@@ -36,7 +39,8 @@ function killTask($tid) {
 	);
 }
 
-function childTask() {
+function childTask()
+{
 	$tid = (yield getTaskId());
 	while (true) {
 		echo "Child task $tid still alive!\n";
@@ -44,7 +48,8 @@ function childTask() {
 	}
 }
 
-function task() {
+function task()
+{
 	$tid = (yield getTaskId());
 	$childTid = (yield newTask(childTask()));
 

@@ -14,11 +14,13 @@ class ErrorDictionary
 {
 	protected static $separator = PHP_EOL . '    ';
 
-	private function __construct() {
+	private function __construct()
+	{
 
 	}
 
-	public static function write($error_set, $path) {
+	public static function write($error_set, $path)
+	{
 		$error_code = array();
 		$error_msg = array();
 		foreach ($error_set['error'] as $const => $value) {
@@ -30,7 +32,8 @@ class ErrorDictionary
 		Common::write($path . DIRECTORY_SEPARATOR . 'ErrorMessage.php', self::errorCode(implode($error_msg, self::$separator)));
 	}
 
-	protected static function errorCode($error_code) {
+	protected static function errorCode($error_code)
+	{
 		$ret = <<<EOF
 <?php
 
@@ -48,7 +51,8 @@ EOF;
 		return $ret;
 	}
 
-	protected static function errorMsg($error_msg) {
+	protected static function errorMsg($error_msg)
+	{
 		$ret = <<<EOF
 <?php
 

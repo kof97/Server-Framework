@@ -58,7 +58,8 @@ class Monitor
 		'sub_param' => '',
 	);
 
-	function __construct($conf) {
+	function __construct($conf)
+	{
 		(isset($conf['idl']) && is_dir($conf['idl'])) || die('"idl" in config is not set or not exist');
 		isset($conf['idl_config']) || die('"idl config dir" in config is not set or not exist');
 		is_dir($conf['idl_config']) || mkdir($conf['idl_config']);
@@ -73,14 +74,16 @@ class Monitor
 	/**
 	 * run.
 	 */
-	protected function run() {
+	protected function run()
+	{
 		$this->getModuleInfo();
 	}
 
 	/**
 	 * read module.
 	 */
-	protected function getModuleInfo() {
+	protected function getModuleInfo()
+	{
 		foreach ($this->module as $module_name => $module_info) {
 			self::$trace['mod'] = $module_name;
 			$this->moduleInfo = $module_info;
@@ -92,7 +95,8 @@ class Monitor
 	/**
 	 * read interface.
 	 */
-	protected function getInterfaceInfo() {
+	protected function getInterfaceInfo()
+	{
 		foreach ($this->moduleInfo['interface'] as $interface_name => $interface_info) {
 			self::$trace['act'] = $interface_name;
 			$this->interfaceInfo = $interface_info;
@@ -123,7 +127,8 @@ class Monitor
 	 *
 	 * @param array $data
 	 */
-	protected function write($data) {
+	protected function write($data)
+	{
 		$file = $this->config['idl_config'] . DIRECTORY_SEPARATOR . strtolower(str_replace('_', '', self::$trace['mod']) . '_' . str_replace('_', '', self::$trace['act'])) . '.php';
 
 		Common::write($file, '<?php' . PHP_EOL . var_export($data, true));
@@ -136,7 +141,8 @@ class Monitor
 	 * @param array  $info
 	 *
 	 */
-	protected function getElementInfo($name, $info) {
+	protected function getElementInfo($name, $info)
+	{
 		self::$trace['param'] = $name;
 
 		switch ($info['type']) {
@@ -187,7 +193,8 @@ class Monitor
 	 *
 	 * @param array
 	 */
-	protected function getTypes($name) {
+	protected function getTypes($name)
+	{
 		// todo 引用逻辑
 
 		isset($types) || isset($this->interfaceInfo['types'][$name]) && $types = $this->interfaceInfo['types'][$name];
@@ -207,7 +214,8 @@ class Monitor
 	 *
 	 * @param array
 	 */
-	protected function processElement($name, $types) {
+	protected function processElement($name, $types)
+	{
 
 	}
 
@@ -220,7 +228,8 @@ class Monitor
 	 *
 	 * @return array
 	 */
-	protected function processInt($name, $info, $type = '') {
+	protected function processInt($name, $info, $type = '')
+	{
 		$res = array();
 
 		$min = 0;
@@ -251,7 +260,8 @@ class Monitor
 	 *
 	 * @return array
 	 */
-	protected function processString($name, $info) {
+	protected function processString($name, $info)
+	{
 		$res = array();
 
 		$min_length = 0;
@@ -275,7 +285,8 @@ class Monitor
 	 *
 	 * @return array
 	 */
-	protected function processEnum($name, $info) {
+	protected function processEnum($name, $info)
+	{
 		$res = array();
 
 		$enum_all = $this->getEnumByName($info['validate']['source']);
@@ -293,7 +304,8 @@ class Monitor
 		return $res;
 	}
 
-	protected function processArray($name, $info) {
+	protected function processArray($name, $info)
+	{
 		$res = array();
 
 		if (isset($info['repeated'])) {
@@ -313,7 +325,8 @@ class Monitor
 	 *
 	 * @return array
 	 */
-	protected function processStruct($name, $info) {
+	protected function processStruct($name, $info)
+	{
 		self::$trace['param'] = $name;
 		$res = array();
 
@@ -338,7 +351,8 @@ class Monitor
 	 *
 	 * @return array
 	 */
-	protected function getEnumByName($name) {
+	protected function getEnumByName($name)
+	{
 		return $this->enum['enumeration'][$name];
 	}
 
@@ -346,7 +360,8 @@ class Monitor
 	 * prepare.
 	 *
 	 */
-	protected function prepare() {
+	protected function prepare()
+	{
 		$this->processErrorMsg();
 		$this->prepareApplication();
 		$this->prepareEnum();
@@ -357,7 +372,8 @@ class Monitor
 	 * process error dictionary
 	 *
 	 */
-	protected function processErrorMsg() {
+	protected function processErrorMsg()
+	{
 		$file = $this->config['idl'] . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'error.json';
 		is_file($file) || die('Not found the "error.json"');
 		$error_set = json_decode(file_get_contents($file), true);
@@ -369,7 +385,8 @@ class Monitor
 	 * prepare application.
 	 *
 	 */
-	protected function prepareApplication() {
+	protected function prepareApplication()
+	{
 		$file = $this->config['idl'] . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'application.json';
 		is_file($file) || die('Not found the "application.json"');
 		$this->application = json_decode(file_get_contents($file), true);
@@ -379,7 +396,8 @@ class Monitor
 	 * prepare enum.
 	 *
 	 */
-	protected function prepareEnum() {
+	protected function prepareEnum()
+	{
 		$file = $this->config['idl'] . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'enum.json';
 		is_file($file) || die('Not found the "enum.json"');
 		$this->enum = json_decode(file_get_contents($file), true);
@@ -389,7 +407,8 @@ class Monitor
 	 * prepare module info.
 	 *
 	 */
-	protected function prepareModule() {
+	protected function prepareModule()
+	{
 		$file_list = glob($this->config['idl'] . DIRECTORY_SEPARATOR . '*.json');
 
 		foreach ($file_list as $file) {

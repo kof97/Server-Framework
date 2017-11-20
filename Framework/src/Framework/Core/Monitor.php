@@ -35,7 +35,8 @@ class Monitor
 		// init
 	}
 
-	public function init() {
+	public function init()
+	{
 		$err = null;
 		$data = '';
 

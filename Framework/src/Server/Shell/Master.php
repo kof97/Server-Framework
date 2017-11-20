@@ -432,7 +432,8 @@ class Master
 			exit('Only run in command line mode ! !' . PHP_EOL);
 		}
 
-		if (!function_exists('pcntl_fork')) {
+		if (!function_exists('pcntl_fork'))
+	{
 			exit('Your system can\'t support pcntl, please install pcntl extension' . PHP_EOL);
 		}
 	}

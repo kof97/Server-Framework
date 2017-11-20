@@ -11,11 +11,13 @@ namespace IDL\Generator;
 class Common
 {
 
-	private function __construct() {
+	private function __construct()
+	{
 
 	}
 
-	public static function sort($data) {
+	public static function sort($data)
+	{
 		$res = array();
 
 		isset($data['name']) && $res['name'] = $data['name'];
@@ -30,7 +32,8 @@ class Common
 		return $res;
 	}
 
-	public static function write($file, $content) {
+	public static function write($file, $content)
+	{
 		file_put_contents($file, $content);
 	}
 }
