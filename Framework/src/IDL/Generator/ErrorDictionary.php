@@ -23,6 +23,7 @@ class ErrorDictionary
 	{
 		$error_code = array();
 		$error_msg = array();
+		empty($error_set['error']) && $error_set['error'] = array();
 		foreach ($error_set['error'] as $const => $value) {
 			array_push($error_code, 'const ' . $const . ' = ' . $value['code'] . ';' . PHP_EOL);
 			array_push($error_msg, 'const ' . $const . ' = ' . $value['message'] . ';' . PHP_EOL);

@@ -16,6 +16,10 @@
 
 
 					}
+				},
+				"validate": {
+					"max_size": 100,
+					"min_size": 1
 				}
 			},
 			"user_list_struct": {

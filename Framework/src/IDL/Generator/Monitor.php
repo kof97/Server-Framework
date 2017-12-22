@@ -265,7 +265,7 @@ class Monitor
 		$res = array();
 
 		$min_length = 0;
-		$max_length = 255;
+		$max_length = 2048000;
 
 		$res['validate']['String']['checkMinLength'][] = isset($info['validate']['min_length']) ? max($info['validate']['min_length'], $min_length) : $min_length;
 		$res['validate']['String']['checkMaxLength'][] = isset($info['validate']['max_length']) ? $info['validate']['max_length'] : $max_length;
@@ -308,11 +308,17 @@ class Monitor
 	{
 		$res = array();
 
+		$max_size = 255;
+		$min_size = 0;
+
 		if (isset($info['repeated'])) {
 			$res['repeated'] = $this->getElementInfo($name, $info['repeated']);
 		}
 
 		$res['type'] = 'array';
+
+		$res['validate']['Array']['checkMaxSize'][] = isset($info['validate']['max_size']) ? $info['validate']['max_size'] : $max_size;
+		$res['validate']['Array']['checkMinSize'][] = isset($info['validate']['min_size']) ? $info['validate']['min_size'] : $min_size;
 
 		return $res;
 	}
