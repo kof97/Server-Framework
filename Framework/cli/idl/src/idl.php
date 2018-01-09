@@ -3,11 +3,11 @@
 require dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 require ROOT . 'src' . DIRECTORY_SEPARATOR . 'loader.php';
 
-$app = 'demo';
+$app = 'api';
 
 $config = array(
-	'idl' => ROOT . '/application/' . $app . '/etc/idl',
-	'idl_config' => ROOT . '/application/' . $app . '/inc/IDL',
+	'idl' => ROOT . '/res/idl/' . $app,
+	'idl_cache' => ROOT . '/application/' . $app . '/inc/IDL',
 	'error_dictionary' => ROOT . '/application/' . $app . '/inc/exception',
 );
 

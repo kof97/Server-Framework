@@ -61,8 +61,8 @@ class Monitor
 	function __construct($conf)
 	{
 		(isset($conf['idl']) && is_dir($conf['idl'])) || die('"idl" in config is not set or not exist');
-		isset($conf['idl_config']) || die('"idl config dir" in config is not set or not exist');
-		is_dir($conf['idl_config']) || mkdir($conf['idl_config']);
+		isset($conf['idl_cache']) || die('"idl config dir" in config is not set or not exist');
+		is_dir($conf['idl_cache']) || mkdir($conf['idl_cache']);
 
 		$this->config = $conf;
 
@@ -129,7 +129,7 @@ class Monitor
 	 */
 	protected function write($data)
 	{
-		$file = $this->config['idl_config'] . DIRECTORY_SEPARATOR . strtolower(str_replace('_', '', self::$trace['mod']) . '_' . str_replace('_', '', self::$trace['act'])) . '.php';
+		$file = $this->config['idl_cache'] . DIRECTORY_SEPARATOR . strtolower(str_replace('_', '', self::$trace['mod']) . '_' . str_replace('_', '', self::$trace['act'])) . '.php';
 
 		Common::write($file, '<?php' . PHP_EOL . var_export($data, true));
 	}
@@ -381,7 +381,10 @@ class Monitor
 	protected function processErrorMsg()
 	{
 		$file = $this->config['idl'] . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'error.json';
-		is_file($file) || die('Not found the "error.json"');
+		if (!is_file($file)) {
+			echo 'Not found the "error.json"' . PHP_EOL;
+			return;
+		}
 		$error_set = json_decode(file_get_contents($file), true);
 
 		ErrorDictionary::write($error_set, $this->config['error_dictionary']);
